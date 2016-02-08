@@ -16,7 +16,7 @@ var lib = require('../../lib');
 // Lambda Handler
 module.exports.handler = function(event, context) {
 
-  context.succeed([]);
+  context.succeed(["hardcoded debug search"]);
 
   //lib.respond(event, function(error, response) {
   //  return context.done(error, response);
