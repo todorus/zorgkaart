@@ -8,7 +8,7 @@
  */
 
 // Require Serverless ENV vars
-var ServerlessHelpers = require('serverless-helpers-js').loadEnv();
+//var ServerlessHelpers = require('serverless-helpers-js').loadEnv();
 
 // Require Logic
 var lib = require('../../lib');
@@ -16,7 +16,7 @@ var lib = require('../../lib');
 // Lambda Handler
 module.exports.handler = function(event, context) {
 
-  context.succeed(event.query);
+  context.succeed(["hardcoded debug search"]);
 
   //lib.respond(event, function(error, response) {
   //  return context.done(error, response);
