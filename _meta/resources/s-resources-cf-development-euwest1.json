@@ -27,7 +27,7 @@
     "IamPolicyLambda": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
-        "PolicyName": "dev-zorgkaart-lambda",
+        "PolicyName": "development-zorgkaart-lambda",
         "PolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
