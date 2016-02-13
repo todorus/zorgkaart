@@ -11,14 +11,31 @@
 //var ServerlessHelpers = require('serverless-helpers-js').loadEnv();
 
 // Require Logic
-var lib = require('../../lib');
+var db = require(__dirname + '/../../lib/models');
+var Region = db["Region"];
 
 // Lambda Handler
-module.exports.handler = function(event, context) {
+module.exports.handler = function (event, context) {
 
-  context.succeed(["hardcoded debug search"]);
+    Region.findAll(
+        {
+            where: {
+                name: {
+                    $iLike: '%' + event.query + '%'
+                }
+            },
+            order: [
+                ['name', 'ASC']
+            ]
 
-  //lib.respond(event, function(error, response) {
-  //  return context.done(error, response);
-  //});
+        }
+    ).then(
+        function (result) {
+            context.succeed(result);
+        },
+        function (error) {
+            context.fail(error);
+        }
+    );
+
 };

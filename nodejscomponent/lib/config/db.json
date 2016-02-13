@@ -27,7 +27,9 @@
       "min": 0,
       "max": 5,
       "idle": 10000
-    }
+    },
+
+    "logging": false
   },
   "production": {
     "commit production to version control" : false
