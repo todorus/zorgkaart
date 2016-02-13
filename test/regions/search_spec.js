@@ -62,19 +62,36 @@ describe("Region", function () {
                 );
 
                 subject.handler(event, context);
-
-
             });
-
-            it("should return an OK status")
 
         })
 
         describe("when no match is found", function () {
 
-            it("should return an empty list")
+            var event = {
+                query: "qii"
+            }
 
-            it("should return an OK status")
+            var matchingRegionNames = []
+
+            it("should return an empty list", function(done){
+                var context = new MockContext()
+                context.then(
+                    function(context){
+
+                        expect(context.error).toBe(null);
+
+                        var responseNames = context.response.map(function(currentValue, index, original){
+                            return currentValue["name"];
+                        });
+                        expect(responseNames).toEqual(matchingRegionNames);
+
+                        done();
+                    }
+                );
+
+                subject.handler(event, context);
+            })
 
         })
     })
