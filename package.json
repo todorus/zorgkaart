@@ -10,11 +10,17 @@
     "url": "git://github.com/"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec --recursive"
+    "test": "NODE_ENV=test ./node_modules/.bin/mocha --reporter spec --recursive"
   },
   "dependencies": {
+    "pg": "^4.4.4",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^3.19.2"
+  },
+  "devDependencies": {
     "expect": "^1.14.0",
     "mocha": "^2.4.5",
+    "sequelize-cli": "^2.3.1",
     "sinon": "^1.17.3"
   }
 }
