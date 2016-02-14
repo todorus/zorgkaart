@@ -41,3 +41,4 @@ nodejscomponent/lib/config/db.json
 #SERVERLESS STUFF
 admin.env
 .env
+_meta/_tmp
