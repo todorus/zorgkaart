@@ -35,6 +35,9 @@ node_modules
 .DS_Store
 .tmp
 
+#datbase configuration
+nodejscomponent/lib/config/db.json
+
 #SERVERLESS STUFF
 admin.env
 .env
