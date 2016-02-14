@@ -14,9 +14,13 @@
       "type": "AWS",
       "authorizationType": "none",
       "apiKeyRequired": false,
-      "requestParameters": {},
+      "requestParameters": {
+
+      },
       "requestTemplates": {
-        "application/json": ""
+        "application/json": {
+          "query" : "$input.params('query')"
+        }
       },
       "responses": {
         "400": {

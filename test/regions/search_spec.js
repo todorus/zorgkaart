@@ -94,5 +94,25 @@ describe("Region", function () {
             })
 
         })
+
+        describe("when no query is supplied", function(){
+
+            var event  = {};
+
+            it("should return an error", function(done){
+                var context = new MockContext()
+                context.then(
+                    function(context){
+
+                        expect(context.error).toNotBe(null);
+
+                        done();
+                    }
+                );
+
+                subject.handler(event, context);
+            })
+
+        })
     })
 });

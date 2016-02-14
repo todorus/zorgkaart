@@ -8,7 +8,7 @@
  */
 
 // Require Serverless ENV vars
-//var ServerlessHelpers = require('serverless-helpers-js').loadEnv();
+var env = require('serverless-helpers-js').loadEnv();
 
 // Require Logic
 var db = require(__dirname + '/../../lib/models');
@@ -16,6 +16,12 @@ var Region = db["Region"];
 
 // Lambda Handler
 module.exports.handler = function (event, context) {
+
+
+    if(event.query == undefined || event.query == null){
+        context.fail("Bad Request: no query was submitted");
+        return;
+    }
 
     Region.findAll(
         {
