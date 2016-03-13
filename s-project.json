@@ -7,7 +7,10 @@
   "description": "A Slick New Serverless Project",
   "custom": {},
   "templates": {},
-  "plugins": [],
+  "plugins": [
+    "serverless-lambda-prune-plugin",
+    "serverless-optimizer-plugin"
+  ],
   "cloudFormation": {
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description": "The AWS CloudFormation template for this Serverless application's resources outside of Lambdas and Api Gateway",

@@ -10,14 +10,16 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
-        unique: true,
+        unique: "compIndex",
         alowNull: false
+      },
+      kind: {
+        allowNull: false,
+        unique: "compIndex",
+        type: Sequelize.INTEGER
       },
       description: {
         type: Sequelize.TEXT
-      },
-      type: {
-        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
@@ -27,7 +29,18 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    }).then(
+        function(){
+          return queryInterface.addIndex(
+            'Regions',
+            ['name', 'kind'],
+            {
+              indexName: 'compIndex',
+              indicesType: 'UNIQUE'
+            }
+          )
+        }
+    );
   },
   down: function(queryInterface, Sequelize) {
     return queryInterface.dropTable('Regions');
