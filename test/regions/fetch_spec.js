@@ -121,32 +121,65 @@ describe("Region", function () {
 
   })
 
-  describe("limit", function () {
+  describe("pagination", function () {
 
-    var event = {
-      limit: 2
-    }
+    describe("without a page", function () {
 
-    var matchingRegions = [
-      {name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
-      {name: 'blob', type: Region.TYPE_MUNICIPALITY}
-    ]
+      var event = {
+        limit: 2
+      }
 
-    it("should return a list of n Regions ordered by name", function (done) {
-      var context = new MockContext()
-      context.then(
-        function (context) {
+      var matchingRegions = [
+        {name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
+        {name: 'blob', type: Region.TYPE_MUNICIPALITY}
+      ]
 
-          expect(context.error).toBe(null);
-          expect(context.response).toEqual(matchingRegions);
+      it("should return a list of the first n Regions ordered by name", function (done) {
+        var context = new MockContext()
+        context.then(
+          function (context) {
 
-          done();
-        }
-      );
+            expect(context.error).toBe(null);
+            expect(context.response).toEqual(matchingRegions);
 
-      subject.handler(event, context);
-    });
+            done();
+          }
+        );
 
+        subject.handler(event, context);
+      });
+
+    })
+
+    describe("with a page", function () {
+
+      // page has a zero index
+      var event = {
+        limit: 2,
+        page: 1
+      }
+
+      var matchingRegions = [
+        {name: 'blub', type: Region.TYPE_MUNICIPALITY},
+        {name: 'Maasdam', type: Region.TYPE_PLACE}
+      ]
+
+      it("should return a list of n Regions ordered by name starting from the supplied page", function (done) {
+        var context = new MockContext()
+        context.then(
+          function (context) {
+
+            expect(context.error).toBe(null);
+            expect(context.response).toEqual(matchingRegions);
+
+            done();
+          }
+        );
+
+        subject.handler(event, context);
+      });
+
+    })
   })
 
   describe("search and limit", function () {

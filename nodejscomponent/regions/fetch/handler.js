@@ -26,15 +26,22 @@ module.exports.handler = function (event, context) {
     };
   }
 
+  var offset = null;
   var limit = null;
   if (event.limit != undefined && event.limit != null) {
     limit = event.limit;
+
+    offset = 0;
+    if(event.page != undefined && event.page != null) {
+      offset = event.page * limit;
+    }
   }
 
   Region.findAll(
     {
       where: where,
       limit: limit,
+      offset: offset,
       order: 'lower("Region"."name") ASC'
 
     }
