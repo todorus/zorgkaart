@@ -17,29 +17,40 @@ var Region = db["Region"];
 // Lambda Handler
 module.exports.handler = function (event, context) {
 
-    var where = null;
-
-    if(event.query != undefined && event.query != null){
-      where = {
-        name: {
-          $iLike: '%' + event.query + '%'
-        }
+  var where = null;
+  if (event.query != undefined && event.query != null) {
+    where = {
+      name: {
+        $iLike: '%' + event.query + '%'
       }
+    };
+  }
+
+  var limit = null;
+  if (event.limit != undefined && event.limit != null) {
+    limit = event.limit;
+  }
+
+  Region.findAll(
+    {
+      where: where,
+      limit: limit,
+      order: 'lower("Region"."name") ASC'
+
     }
-
-    Region.findAll(
-        {
-            where: where,
-            order: 'lower("Region"."name") ASC'
-
-        }
-    ).then(
-        function (result) {
-            context.succeed(result);
-        },
-        function (error) {
-            context.fail(error);
-        }
-    );
+  ).then(
+    function (result) {
+      var response = result.map(function (currentValue, index, original) {
+        return {
+          name: currentValue["name"],
+          type: currentValue["type"]
+        };
+      });
+      context.succeed(response);
+    },
+    function (error) {
+      context.fail(error);
+    }
+  );
 
 };

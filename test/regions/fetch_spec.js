@@ -1,132 +1,180 @@
 require('../spec_helper.js');
 
-var subject = require(".././handler.js");
+var subject = require("../../nodejscomponent/regions/fetch/handler.js");
+var db = require("../../nodejscomponent/lib/models");
+var Region = db["Region"];
 
 describe("Region", function () {
-    describe("search", function () {
 
-        var db = require("../../nodejscomponent/lib/models");
-        before(
-            function (done) {
-                // Wipe db
-                db.sequelize.sync({force: true}).then(
-                    function() {
-                        // Seed db
-                        return db["Region"].bulkCreate(
-                            [
-                                {name: 'Maastricht'},
-                                {name: 'Maasdam'},
-                                {name: 'bijdeMaas'},
-                                {name: 'blub'},
-                                {name: 'blob'}
-                            ]
-                        )
-                    }
-                ).then(
-                    function(result){
-                        done();
-                    },
-                    function(error){
-                        throw error;
-                    }
-                )
-            }
-        )
-
-        describe("when a match is found", function () {
-
-            var event = {
-                query: "maas"
-            }
-
-            var matchingRegionNames = [
-                "bijdeMaas",
-                "Maasdam",
-                "Maastricht"
+  before(
+    function (done) {
+      // Wipe db
+      db.sequelize.sync({force: true}).then(
+        function () {
+          // Seed db
+          return db["Region"].bulkCreate(
+            [
+              {name: 'Maastricht', type: Region.TYPE_PLACE},
+              {name: 'Maasdam', type: Region.TYPE_PLACE},
+              {name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
+              {name: 'blub', type: Region.TYPE_MUNICIPALITY},
+              {name: 'blob', type: Region.TYPE_MUNICIPALITY}
             ]
+          )
+        }
+      ).then(
+        function (result) {
+          done();
+        },
+        function (error) {
+          throw error;
+        }
+      )
+    }
+  )
 
-            it("should return a list of the results ordered by name", function (done) {
-                var context = new MockContext()
-                context.then(
-                    function(context){
+  describe("all", function () {
 
-                        expect(context.error).toBe(null);
+    var event = {
+    }
 
-                        var responseNames = context.response.map(function(currentValue, index, original){
-                           return currentValue["name"];
-                        });
-                        expect(responseNames).toEqual(matchingRegionNames);
+    var matchingRegions = [
+      {name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
+      {name: 'blob', type: Region.TYPE_MUNICIPALITY},
+      {name: 'blub', type: Region.TYPE_MUNICIPALITY},
+      {name: 'Maasdam', type: Region.TYPE_PLACE},
+      {name: 'Maastricht', type: Region.TYPE_PLACE}
+    ]
 
-                        done();
-                    }
-                );
+    it("should return a list of all Regions ordered by name", function (done) {
+      var context = new MockContext()
+      context.then(
+        function (context) {
 
-                subject.handler(event, context);
-            });
+          expect(context.error).toBe(null);
+          expect(context.response).toEqual(matchingRegions);
 
-        })
+          done();
+        }
+      );
 
-        describe("when no match is found", function () {
+      subject.handler(event, context);
+    });
 
-            var event = {
-                query: "qii"
-            }
+  })
 
-            var matchingRegionNames = []
+  describe("search", function () {
 
-            it("should return an empty list", function(done){
-                var context = new MockContext()
-                context.then(
-                    function(context){
+    describe("when a match is found for a query", function () {
 
-                        expect(context.error).toBe(null);
+      var event = {
+        query: "maas"
+      }
 
-                        var responseNames = context.response.map(function(currentValue, index, original){
-                            return currentValue["name"];
-                        });
-                        expect(responseNames).toEqual(matchingRegionNames);
+      var matchingRegions = [
+        {name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
+        {name: 'Maasdam', type: Region.TYPE_PLACE},
+        {name: 'Maastricht', type: Region.TYPE_PLACE}
+      ]
 
-                        done();
-                    }
-                );
+      it("should return a list of the results ordered by name", function (done) {
+        var context = new MockContext()
+        context.then(
+          function (context) {
 
-                subject.handler(event, context);
-            })
+            expect(context.error).toBe(null);
+            expect(context.response).toEqual(matchingRegions);
 
-        })
-
-        describe("when no query is supplied", function(){
-
-          var event = {
+            done();
           }
+        );
 
-          var matchingRegionNames = [
-            "BijdeMaas",
-            "blob",
-            "blub",
-            "Maasdam",
-            "Maastricht"
-          ]
+        subject.handler(event, context);
+      });
 
-          it("should return a list of the results ordered by name", function (done) {
-            var context = new MockContext()
-            context.then(
-              function(context){
-
-                expect(context.error).toBe(null);
-
-                var responseNames = context.response.map(function(currentValue, index, original){
-                  return currentValue["name"];
-                });
-                expect(responseNames).toEqual(matchingRegionNames);
-
-                done();
-              }
-            );
-
-            subject.handler(event, context);
-          });
-
-        })
     })
+
+    describe("when no match is found for a query", function () {
+
+      var event = {
+        query: "qii"
+      }
+
+      var matchingRegions = []
+
+      it("should return an empty list", function (done) {
+        var context = new MockContext()
+        context.then(
+          function (context) {
+
+            expect(context.error).toBe(null);
+            expect(context.response).toEqual(matchingRegions);
+
+            done();
+          }
+        );
+
+        subject.handler(event, context);
+      })
+
+    })
+
+  })
+
+  describe("limit", function () {
+
+    var event = {
+      limit: 2
+    }
+
+    var matchingRegions = [
+      {name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
+      {name: 'blob', type: Region.TYPE_MUNICIPALITY}
+    ]
+
+    it("should return a list of n Regions ordered by name", function (done) {
+      var context = new MockContext()
+      context.then(
+        function (context) {
+
+          expect(context.error).toBe(null);
+          expect(context.response).toEqual(matchingRegions);
+
+          done();
+        }
+      );
+
+      subject.handler(event, context);
+    });
+
+  })
+
+  describe("search and limit", function () {
+
+    var event = {
+      query: "maas",
+      limit: 2
+    }
+
+    var matchingRegions = [
+      {name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
+      {name: 'Maasdam', type: Region.TYPE_PLACE}
+    ]
+
+    it("should return a list of n Regions ordered by name", function (done) {
+      var context = new MockContext()
+      context.then(
+        function (context) {
+
+          expect(context.error).toBe(null);
+          expect(context.response).toEqual(matchingRegions);
+
+          done();
+        }
+      );
+
+      subject.handler(event, context);
+    });
+
+  })
 });
