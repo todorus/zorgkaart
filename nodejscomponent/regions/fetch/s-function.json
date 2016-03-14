@@ -1,6 +1,6 @@
 {
-  "name": "search",
-  "handler": "regions/search/handler.handler",
+  "name": "fetch",
+  "handler": "regions/fetch/handler.handler",
   "timeout": 6,
   "memorySize": 1024,
   "custom": {
@@ -9,7 +9,7 @@
   },
   "endpoints": [
     {
-      "path": "regions/search",
+      "path": "regions",
       "method": "GET",
       "type": "AWS",
       "authorizationType": "none",
