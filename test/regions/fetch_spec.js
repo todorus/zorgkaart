@@ -1,6 +1,6 @@
 require('../spec_helper.js');
 
-var subject = require("../../nodejscomponent/regions/search/handler.js");
+var subject = require(".././handler.js");
 
 describe("Region", function () {
     describe("search", function () {
@@ -16,7 +16,7 @@ describe("Region", function () {
                             [
                                 {name: 'Maastricht'},
                                 {name: 'Maasdam'},
-                                {name: 'BijdeMaas'},
+                                {name: 'bijdeMaas'},
                                 {name: 'blub'},
                                 {name: 'blob'}
                             ]
@@ -40,7 +40,7 @@ describe("Region", function () {
             }
 
             var matchingRegionNames = [
-                "BijdeMaas",
+                "bijdeMaas",
                 "Maasdam",
                 "Maastricht"
             ]
@@ -97,21 +97,35 @@ describe("Region", function () {
 
         describe("when no query is supplied", function(){
 
-            var event  = {};
+          var event = {
+          }
 
-            it("should return an error", function(done){
-                var context = new MockContext()
-                context.then(
-                    function(context){
+          var matchingRegionNames = [
+            "BijdeMaas",
+            "blob",
+            "blub",
+            "Maasdam",
+            "Maastricht"
+          ]
 
-                        expect(context.error).toNotBe(null);
+          it("should return a list of the results ordered by name", function (done) {
+            var context = new MockContext()
+            context.then(
+              function(context){
 
-                        done();
-                    }
-                );
+                expect(context.error).toBe(null);
 
-                subject.handler(event, context);
-            })
+                var responseNames = context.response.map(function(currentValue, index, original){
+                  return currentValue["name"];
+                });
+                expect(responseNames).toEqual(matchingRegionNames);
+
+                done();
+              }
+            );
+
+            subject.handler(event, context);
+          });
 
         })
     })

@@ -11,18 +11,29 @@
 var env = require('serverless-helpers-js').loadEnv();
 
 // Require Logic
-console.log("opending db");
 var db = require(__dirname + '/../../lib/models');
-console.log("defining region");
 var Region = db["Region"];
 
 // Lambda Handler
 module.exports.handler = function (event, context) {
 
-    console.log("query db");
-    Region.findAll({
-        order: 'lower("Region"."name") ASC'
-    }).then(
+    var where = null;
+
+    if(event.query != undefined && event.query != null){
+      where = {
+        name: {
+          $iLike: '%' + event.query + '%'
+        }
+      }
+    }
+
+    Region.findAll(
+        {
+            where: where,
+            order: 'lower("Region"."name") ASC'
+
+        }
+    ).then(
         function (result) {
             context.succeed(result);
         },
