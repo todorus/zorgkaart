@@ -1,6 +1,5 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-  var RegionToRegion = sequelize.define('RegionToRegion', {});
 
   var Region = sequelize.define('Region', {
     name: {
@@ -19,7 +18,7 @@ module.exports = function(sequelize, DataTypes) {
     {
       as: 'Parents',
       foreignKey: 'ChildId',
-      through: RegionToRegion
+      through: 'RegionToRegions'
     }
   );
 
