@@ -3,7 +3,6 @@ require('../spec_helper.js');
 var subject = require("../../nodejscomponent/regions/atomize/handler.js");
 var db = require("../../nodejscomponent/lib/models");
 var Region = db["Region"];
-console.log("regions?",Region.parents);
 var RegionToRegion = db["RegionToRegion"];
 
 describe("Region", function () {

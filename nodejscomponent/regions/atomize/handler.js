@@ -19,8 +19,11 @@ module.exports.handler = function (event, context) {
 
   var type = Region.TYPE_ZIP;
   var ids = event["regions"].join();
+
   db.sequelize.query(
-    "SELECT * FROM \"Regions\" WHERE type=" + type + " AND id IN (" + ids + ")",
+    "SELECT * FROM \"Regions\" "+
+    "WHERE type=1 AND id IN (" + ids + ") "+
+    "OR id IN ( SELECT \"ChildId\" FROM \"RegionToRegions\" WHERE \"ParentId\" IN (" + ids + "))",
     { type: db.sequelize.QueryTypes.SELECT}
   ).then(
     function (result) {
