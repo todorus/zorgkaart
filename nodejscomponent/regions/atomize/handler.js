@@ -15,36 +15,13 @@ var db = require(__dirname + '/../../lib/models');
 var Region = db["Region"];
 
 // Lambda Handler
-module.exports.handler = function (event, context) {
+module.exports.handler = function(event, context) {
 
-  var where = null;
-  if (event.query != undefined && event.query != null) {
-    where = {
-      name: {
-        $iLike: '%' + event.query + '%'
-      }
-    };
-  }
-
-  var offset = null;
-  var limit = null;
-  if (event.limit != undefined && event.limit != null) {
-    limit = event.limit;
-
-    offset = 0;
-    if(event.page != undefined && event.page != null) {
-      offset = event.page * limit;
-    }
-  }
-
-  Region.findAll(
-    {
-      where: where,
-      limit: limit,
-      offset: offset,
-      order: 'lower("Region"."name") ASC'
-
-    }
+  var type = Region.TYPE_ZIP;
+  var ids = event["regions"].join();
+  db.sequelize.query(
+    "SELECT * FROM \"Regions\" WHERE type="+type+" AND id IN ("+ids+")",
+    { type: db.sequelize.QueryTypes.SELECT}
   ).then(
     function (result) {
       var response = result.map(function (currentValue, index, original) {
@@ -59,6 +36,6 @@ module.exports.handler = function (event, context) {
     function (error) {
       context.fail(error);
     }
-  );
+  )
 
 };
