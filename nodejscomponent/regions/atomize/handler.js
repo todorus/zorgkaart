@@ -15,12 +15,12 @@ var db = require(__dirname + '/../../lib/models');
 var Region = db["Region"];
 
 // Lambda Handler
-module.exports.handler = function(event, context) {
+module.exports.handler = function (event, context) {
 
   var type = Region.TYPE_ZIP;
   var ids = event["regions"].join();
   db.sequelize.query(
-    "SELECT * FROM \"Regions\" WHERE type="+type+" AND id IN ("+ids+")",
+    "SELECT * FROM \"Regions\" WHERE type=" + type + " AND id IN (" + ids + ")",
     { type: db.sequelize.QueryTypes.SELECT}
   ).then(
     function (result) {
