@@ -26,12 +26,11 @@ module.exports.handler = function (event, context) {
     };
   }
 
-  var offset = null;
-  var limit = null;
+  var offset = 0;
+  var limit = 10;
   if (event.limit != undefined && event.limit != null) {
     limit = event.limit;
 
-    offset = 0;
     if(event.page != undefined && event.page != null) {
       offset = event.page * limit;
     }

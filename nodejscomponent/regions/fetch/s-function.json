@@ -19,7 +19,9 @@
       },
       "requestTemplates": {
         "application/json": {
-          "query" : "$input.params('query')"
+          "query" : "$input.params('query')",
+          "limit" : "$input.params('limit')",
+          "page" : "$input.params('page')"
         }
       },
       "responses": {
