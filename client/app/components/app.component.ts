@@ -6,8 +6,12 @@ import {HTTP_PROVIDERS} from "angular2/http";
 @Component({
   selector: 'my-app',
   template: `
-    <h1>Waar Regel ik Zorg.nl</h1>
-    <region-search></region-search>
+    <div id="side_menu_container">
+      <div id="side_menu">
+          <h2>REGIO</h2>
+          <region-search></region-search>
+      </div>
+    </div>
   `,
   directives: [RegionSearchComponent],
   providers: [RegionService, HTTP_PROVIDERS]
