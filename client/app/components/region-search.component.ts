@@ -6,9 +6,10 @@ import {RegionService} from "../services/region.service";
   selector: 'region-search',
   template: `
     <h3>region search</h3>
+    <input #query (keyup)="search(query.value)"/>
     <ul class="regions">
       <li *ngFor="#region of regions">
-        <span class="badge">{{region.id}}</span> {{region.name}}
+        {{region.name}}
       </li>
     </ul>
   `
@@ -20,11 +21,13 @@ export class RegionSearchComponent {
 
   constructor(private _regionService: RegionService) { }
 
-  ngOnInit() {
-    this.search();
-  }
-  search() {
-    this._regionService.fetch("Maas")
+  search(query: string) {
+    if(query == null || query.length < 2){
+      this.regions = [];
+      return;
+    }
+
+    this._regionService.fetch(query)
         .subscribe(
           regions => this.regions = regions,
           error =>  this.errorMessage = <any>error
