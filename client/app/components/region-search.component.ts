@@ -15,6 +15,7 @@ import {RegionService} from "../services/region.service";
 })
 export class RegionSearchComponent {
 
+  errorMessage;
   regions: Region[];
 
   constructor(private _regionService: RegionService) { }
@@ -23,7 +24,11 @@ export class RegionSearchComponent {
     this.search();
   }
   search() {
-    this._regionService.fetch("Maas").then(regions => this.regions = regions);
+    this._regionService.fetch("Maas")
+        .subscribe(
+          regions => this.regions = regions,
+          error =>  this.errorMessage = <any>error
+        );
   }
 
 }

@@ -1,5 +1,7 @@
 import {Injectable} from 'angular2/core';
 import {Region} from "../model/region";
+import {Http, Response} from "angular2/http";
+import {Observable} from "rxjs/Observable";
 
 
 var mock: Region[] = [
@@ -10,7 +12,22 @@ var mock: Region[] = [
 
 @Injectable()
 export class RegionService {
-    fetch(query: string): Promise<Region[]>{
-        return Promise.resolve(mock);
+
+    constructor (private _http: Http) {}
+
+    private _regionsUrl = 'https://c0x7s177j4.execute-api.eu-west-1.amazonaws.com/development/regions';  // URL to web api
+
+    fetch(query: string) {
+        // return this._http.get(this._regionsUrl, {query: query, limit: 10})
+        return this._http.get(this._regionsUrl)
+            .map(res => <Region[]> res.json())
+            .catch(this.handleError);
+    }
+
+    private handleError (error: Response) {
+        // in a real world app, we may send the error to some remote logging infrastructure
+        // instead of just logging it to the console
+        console.error(error);
+        return Observable.throw(error.json().error || 'Server error');
     }
 }
