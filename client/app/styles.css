@@ -74,9 +74,20 @@ input {
 }
 
 /*
+    MAP
+*/
+#map, #map-inner {
+    width: 100%;
+    height: 100%;
+}
+
+/*
     MENU
 */
 #side_menu_container {
+    position: absolute;
+    top: 0px;
+    left: 0px;
     display: inline-block;
     width: auto;
     height: 100%;
