@@ -3,3 +3,10 @@ app/**/*.map
 node_modules
 jspm_packages
 bower_components
+
+#IDE Stuff
+**/.idea
+
+#OS STUFF
+.DS_Store
+.tmp
