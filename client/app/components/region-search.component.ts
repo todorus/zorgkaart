@@ -5,14 +5,26 @@ import {RegionService} from "../services/region.service";
 @Component({
   selector: 'region-search',
   template: `
-    <h3>region search</h3>
-    <input #query (keyup)="search(query.value)"/>
+    <input class="regionquery" #query (keyup)="search(query.value)"/>
     <ul class="regions">
       <li *ngFor="#region of regions">
         {{region.name}}
       </li>
     </ul>
-  `
+  `,
+  styles:[
+    `
+        input.regionquery {
+            width: 100%;
+        }
+        ul.regions {
+            width: 100%;
+        }
+        ul.regions li {
+            border-top: none;
+        }
+    `
+  ]
 })
 export class RegionSearchComponent {
 
