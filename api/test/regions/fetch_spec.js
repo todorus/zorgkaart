@@ -15,12 +15,14 @@ describe("Region", function () {
           return db["Region"].bulkCreate(
             [
               {id: 1, name: 'Maastricht', type: Region.TYPE_PLACE},
-              {id: 2, name: 'Maasdam', type: Region.TYPE_PLACE},
+              {id: 2, name: 'Maasdamn', type: Region.TYPE_PLACE},
               {id: 3, name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
               {id: 4, name: 'blub', type: Region.TYPE_MUNICIPALITY},
               {id: 5, name: 'blob', type: Region.TYPE_MUNICIPALITY},
               {id: 6, name: 'Maasland', type: Region.TYPE_MUNICIPALITY},
               {id: 7, name: 'Overblaak', type: Region.TYPE_PLACE},
+              {id: 8, name: 'Ossdam', type: Region.TYPE_PLACE},
+              {id: 9, name: 'Oss', type: Region.TYPE_PLACE},
             ]
           )
         }
@@ -44,10 +46,12 @@ describe("Region", function () {
       {id: 3, name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
       {id: 5, name: 'blob', type: Region.TYPE_MUNICIPALITY},
       {id: 4, name: 'blub', type: Region.TYPE_MUNICIPALITY},
-      {id: 2, name: 'Maasdam', type: Region.TYPE_PLACE},
+      {id: 2, name: 'Maasdamn', type: Region.TYPE_PLACE},
       {id: 6, name: 'Maasland', type: Region.TYPE_MUNICIPALITY},
       {id: 1, name: 'Maastricht', type: Region.TYPE_PLACE},
-      {id: 7, name: 'Overblaak', type: Region.TYPE_PLACE}
+      {id: 9, name: 'Oss', type: Region.TYPE_PLACE},
+      {id: 8, name: 'Ossdam', type: Region.TYPE_PLACE},
+      {id: 7, name: 'Overblaak', type: Region.TYPE_PLACE},
     ]
 
     it("should return a list of all Regions ordered by name", function (done) {
@@ -71,17 +75,16 @@ describe("Region", function () {
 
     describe("when a match is found for a query", function () {
 
-      var event = {
-        query: "maas"
-      }
+      it("should return a list of the results ordered by length", function (done) {
+        var event = {
+          query: "oss"
+        }
 
-      var matchingRegions = [
-        {id: 2, name: 'Maasdam', type: Region.TYPE_PLACE},
-        {id: 6, name: 'Maasland', type: Region.TYPE_MUNICIPALITY},
-        {id: 1, name: 'Maastricht', type: Region.TYPE_PLACE},
-      ]
+        var matchingRegions = [
+          {id: 9, name: 'Oss', type: Region.TYPE_PLACE},
+          {id: 8, name: 'Ossdam', type: Region.TYPE_PLACE}
+        ]
 
-      it("should return a list of the results ordered by name", function (done) {
         var context = new MockContext()
         context.then(
           function (context) {
@@ -96,20 +99,17 @@ describe("Region", function () {
         subject.handler(event, context);
       });
 
-    })
-
-    describe("when a match is found for another query", function () {
-
-      var event = {
-        query: "bl"
-      }
-
-      var matchingRegions = [
-        {id: 5, name: 'blob', type: Region.TYPE_MUNICIPALITY},
-        {id: 4, name: 'blub', type: Region.TYPE_MUNICIPALITY}
-      ]
-
       it("should return a list of the results ordered by name", function (done) {
+        var event = {
+          query: "maas"
+        }
+
+        var matchingRegions = [
+          {id: 2, name: 'Maasdamn', type: Region.TYPE_PLACE},
+          {id: 6, name: 'Maasland', type: Region.TYPE_MUNICIPALITY},
+          {id: 1, name: 'Maastricht', type: Region.TYPE_PLACE},
+        ]
+
         var context = new MockContext()
         context.then(
           function (context) {
@@ -193,7 +193,7 @@ describe("Region", function () {
 
       var matchingRegions = [
         {id: 4, name: 'blub', type: Region.TYPE_MUNICIPALITY},
-        {id: 2, name: 'Maasdam', type: Region.TYPE_PLACE}
+        {id: 2, name: 'Maasdamn', type: Region.TYPE_PLACE}
       ]
 
       it("should return a list of n Regions ordered by name starting from the supplied page", function (done) {
@@ -222,7 +222,7 @@ describe("Region", function () {
     }
 
     var matchingRegions = [
-      {id: 2, name: 'Maasdam', type: Region.TYPE_PLACE},
+      {id: 2, name: 'Maasdamn', type: Region.TYPE_PLACE},
       {id: 6, name: 'Maasland', type: Region.TYPE_MUNICIPALITY}
     ]
 
