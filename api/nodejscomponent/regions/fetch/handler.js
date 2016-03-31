@@ -21,7 +21,7 @@ module.exports.handler = function (event, context) {
   if (event.query != undefined && event.query != null) {
     where = {
       name: {
-        $iLike: '%' + event.query + '%'
+        $iLike: event.query + '%'
       }
     };
   }

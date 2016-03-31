@@ -18,7 +18,9 @@ describe("Region", function () {
               {id: 2, name: 'Maasdam', type: Region.TYPE_PLACE},
               {id: 3, name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
               {id: 4, name: 'blub', type: Region.TYPE_MUNICIPALITY},
-              {id: 5, name: 'blob', type: Region.TYPE_MUNICIPALITY}
+              {id: 5, name: 'blob', type: Region.TYPE_MUNICIPALITY},
+              {id: 6, name: 'Maasland', type: Region.TYPE_MUNICIPALITY},
+              {id: 7, name: 'Overblaak', type: Region.TYPE_PLACE},
             ]
           )
         }
@@ -43,7 +45,9 @@ describe("Region", function () {
       {id: 5, name: 'blob', type: Region.TYPE_MUNICIPALITY},
       {id: 4, name: 'blub', type: Region.TYPE_MUNICIPALITY},
       {id: 2, name: 'Maasdam', type: Region.TYPE_PLACE},
-      {id: 1, name: 'Maastricht', type: Region.TYPE_PLACE}
+      {id: 6, name: 'Maasland', type: Region.TYPE_MUNICIPALITY},
+      {id: 1, name: 'Maastricht', type: Region.TYPE_PLACE},
+      {id: 7, name: 'Overblaak', type: Region.TYPE_PLACE}
     ]
 
     it("should return a list of all Regions ordered by name", function (done) {
@@ -72,9 +76,37 @@ describe("Region", function () {
       }
 
       var matchingRegions = [
-        {id: 3, name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
         {id: 2, name: 'Maasdam', type: Region.TYPE_PLACE},
-        {id: 1, name: 'Maastricht', type: Region.TYPE_PLACE}
+        {id: 6, name: 'Maasland', type: Region.TYPE_MUNICIPALITY},
+        {id: 1, name: 'Maastricht', type: Region.TYPE_PLACE},
+      ]
+
+      it("should return a list of the results ordered by name", function (done) {
+        var context = new MockContext()
+        context.then(
+          function (context) {
+
+            expect(context.error).toBe(null);
+            expect(context.response).toEqual(matchingRegions);
+
+            done();
+          }
+        );
+
+        subject.handler(event, context);
+      });
+
+    })
+
+    describe("when a match is found for another query", function () {
+
+      var event = {
+        query: "bl"
+      }
+
+      var matchingRegions = [
+        {id: 5, name: 'blob', type: Region.TYPE_MUNICIPALITY},
+        {id: 4, name: 'blub', type: Region.TYPE_MUNICIPALITY}
       ]
 
       it("should return a list of the results ordered by name", function (done) {
@@ -190,8 +222,8 @@ describe("Region", function () {
     }
 
     var matchingRegions = [
-      {id: 3, name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
-      {id: 2, name: 'Maasdam', type: Region.TYPE_PLACE}
+      {id: 2, name: 'Maasdam', type: Region.TYPE_PLACE},
+      {id: 6, name: 'Maasland', type: Region.TYPE_MUNICIPALITY}
     ]
 
     it("should return a list of n Regions ordered by name", function (done) {
