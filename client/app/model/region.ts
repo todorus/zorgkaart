@@ -13,22 +13,6 @@ export class Region {
     name: string;
     type: number;
 
-    typeAsString():string {
-        var result:string = null;
-        switch (this.type){
-            case Type.Zip:
-                result = "postcode";
-                break;
-            case Type.Place:
-                result = "plaats";
-                break;
-            case Type.Municipality:
-                result = "gemeente";
-                break;
-            case Type.Province:
-                result = "provincie";
-                break;
-        }
-        return result;
-    }
+    // Client
+    focused: boolean = false;
 }
