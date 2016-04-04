@@ -14,15 +14,15 @@ describe("Region", function () {
           // Seed db
           return db["Region"].bulkCreate(
             [
-              {id: 1, name: 'Maastricht', type: Region.TYPE_PLACE},
-              {id: 2, name: 'Maasdamn', type: Region.TYPE_PLACE},
-              {id: 3, name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
-              {id: 4, name: 'blub', type: Region.TYPE_MUNICIPALITY},
-              {id: 5, name: 'blob', type: Region.TYPE_MUNICIPALITY},
-              {id: 6, name: 'Maasland', type: Region.TYPE_MUNICIPALITY},
-              {id: 7, name: 'Overblaak', type: Region.TYPE_PLACE},
-              {id: 8, name: 'Ossdam', type: Region.TYPE_PLACE},
-              {id: 9, name: 'Oss', type: Region.TYPE_PLACE},
+              {id: 1, name: 'Maastricht', type: Region.TYPE_PLACE, area: {properties: {name: 'Maastricht'}, geometry: [[1,1]]}},
+              {id: 2, name: 'Maasdamn', type: Region.TYPE_PLACE, area: {properties: {name: 'Maasdamn'}, geometry: [[2,1]]}},
+              {id: 3, name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY, area: {properties: {name: 'bijdeMaas'}, geometry: [[3,1]]}},
+              {id: 4, name: 'blub', type: Region.TYPE_MUNICIPALITY, area: {properties: {name: 'blub'}, geometry: [[4,1]]}},
+              {id: 5, name: 'blob', type: Region.TYPE_MUNICIPALITY, area: {properties: {name: 'blob'}, geometry: [[5,1]]}},
+              {id: 6, name: 'Maasland', type: Region.TYPE_MUNICIPALITY, area: {properties: {name: 'Maasland'}, geometry: [[6,1]]}},
+              {id: 7, name: 'Overblaak', type: Region.TYPE_PLACE, area: {properties: {name: 'Overblaak'}, geometry: [[7,1]]}},
+              {id: 8, name: 'Ossdam', type: Region.TYPE_PLACE, area: {properties: {name: 'Ossdam'}, geometry: [[8,1]]}},
+              {id: 9, name: 'Oss', type: Region.TYPE_PLACE, area: {properties: {name: 'Oss'}, geometry: [[9,1]]}},
             ]
           )
         }
@@ -43,15 +43,15 @@ describe("Region", function () {
     }
 
     var matchingRegions = [
-      {id: 3, name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
-      {id: 5, name: 'blob', type: Region.TYPE_MUNICIPALITY},
-      {id: 4, name: 'blub', type: Region.TYPE_MUNICIPALITY},
-      {id: 2, name: 'Maasdamn', type: Region.TYPE_PLACE},
-      {id: 6, name: 'Maasland', type: Region.TYPE_MUNICIPALITY},
-      {id: 1, name: 'Maastricht', type: Region.TYPE_PLACE},
-      {id: 9, name: 'Oss', type: Region.TYPE_PLACE},
-      {id: 8, name: 'Ossdam', type: Region.TYPE_PLACE},
-      {id: 7, name: 'Overblaak', type: Region.TYPE_PLACE},
+      {id: 3, name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY, area: {properties: {name: 'bijdeMaas'}, geometry: [[3,1]]}},
+      {id: 5, name: 'blob', type: Region.TYPE_MUNICIPALITY, area: {properties: {name: 'blob'}, geometry: [[5,1]]}},
+      {id: 4, name: 'blub', type: Region.TYPE_MUNICIPALITY, area: {properties: {name: 'blub'}, geometry: [[4,1]]}},
+      {id: 2, name: 'Maasdamn', type: Region.TYPE_PLACE, area: {properties: {name: 'Maasdamn'}, geometry: [[2,1]]}},
+      {id: 6, name: 'Maasland', type: Region.TYPE_MUNICIPALITY, area: {properties: {name: 'Maasland'}, geometry: [[6,1]]}},
+      {id: 1, name: 'Maastricht', type: Region.TYPE_PLACE, area: {properties: {name: 'Maastricht'}, geometry: [[1,1]]}},
+      {id: 9, name: 'Oss', type: Region.TYPE_PLACE, area: {properties: {name: 'Oss'}, geometry: [[9,1]]}},
+      {id: 8, name: 'Ossdam', type: Region.TYPE_PLACE, area: {properties: {name: 'Ossdam'}, geometry: [[8,1]]}},
+      {id: 7, name: 'Overblaak', type: Region.TYPE_PLACE, area: {properties: {name: 'Overblaak'}, geometry: [[7,1]]}},
     ]
 
     it("should return a list of all Regions ordered by name", function (done) {
@@ -81,8 +81,8 @@ describe("Region", function () {
         }
 
         var matchingRegions = [
-          {id: 9, name: 'Oss', type: Region.TYPE_PLACE},
-          {id: 8, name: 'Ossdam', type: Region.TYPE_PLACE}
+          {id: 9, name: 'Oss', type: Region.TYPE_PLACE, area: {properties: {name: 'Oss'}, geometry: [[9,1]]}},
+          {id: 8, name: 'Ossdam', type: Region.TYPE_PLACE, area: {properties: {name: 'Ossdam'}, geometry: [[8,1]]}},
         ]
 
         var context = new MockContext()
@@ -105,9 +105,9 @@ describe("Region", function () {
         }
 
         var matchingRegions = [
-          {id: 2, name: 'Maasdamn', type: Region.TYPE_PLACE},
-          {id: 6, name: 'Maasland', type: Region.TYPE_MUNICIPALITY},
-          {id: 1, name: 'Maastricht', type: Region.TYPE_PLACE},
+          {id: 2, name: 'Maasdamn', type: Region.TYPE_PLACE, area: {properties: {name: 'Maasdamn'}, geometry: [[2,1]]}},
+          {id: 6, name: 'Maasland', type: Region.TYPE_MUNICIPALITY, area: {properties: {name: 'Maasland'}, geometry: [[6,1]]}},
+          {id: 1, name: 'Maastricht', type: Region.TYPE_PLACE, area: {properties: {name: 'Maastricht'}, geometry: [[1,1]]}},
         ]
 
         var context = new MockContext()
@@ -162,8 +162,8 @@ describe("Region", function () {
       }
 
       var matchingRegions = [
-        {id: 3, name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
-        {id: 5, name: 'blob', type: Region.TYPE_MUNICIPALITY}
+        {id: 3, name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY, area: {properties: {name: 'bijdeMaas'}, geometry: [[3,1]]}},
+        {id: 5, name: 'blob', type: Region.TYPE_MUNICIPALITY, area: {properties: {name: 'blob'}, geometry: [[5,1]]}},
       ]
 
       it("should return a list of the first n Regions ordered by name", function (done) {
@@ -192,8 +192,8 @@ describe("Region", function () {
       }
 
       var matchingRegions = [
-        {id: 4, name: 'blub', type: Region.TYPE_MUNICIPALITY},
-        {id: 2, name: 'Maasdamn', type: Region.TYPE_PLACE}
+        {id: 4, name: 'blub', type: Region.TYPE_MUNICIPALITY, area: {properties: {name: 'blub'}, geometry: [[4,1]]}},
+        {id: 2, name: 'Maasdamn', type: Region.TYPE_PLACE, area: {properties: {name: 'Maasdamn'}, geometry: [[2,1]]}},
       ]
 
       it("should return a list of n Regions ordered by name starting from the supplied page", function (done) {
@@ -222,8 +222,8 @@ describe("Region", function () {
     }
 
     var matchingRegions = [
-      {id: 2, name: 'Maasdamn', type: Region.TYPE_PLACE},
-      {id: 6, name: 'Maasland', type: Region.TYPE_MUNICIPALITY}
+      {id: 2, name: 'Maasdamn', type: Region.TYPE_PLACE, area: {properties: {name: 'Maasdamn'}, geometry: [[2,1]]}},
+      {id: 6, name: 'Maasland', type: Region.TYPE_MUNICIPALITY, area: {properties: {name: 'Maasland'}, geometry: [[6,1]]}},
     ]
 
     it("should return a list of n Regions ordered by name", function (done) {
