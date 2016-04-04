@@ -5,7 +5,7 @@ import {RegionService} from "../services/region.service";
 @Component({
     selector: 'region-search',
     template: `
-    <input class="regionquery" #query (keyup)="search(query.value)"/>
+    <input class="regionquery" #query [value]="_inputValue" (keyup)="search(query.value)"/>
     <ul class="regions">
       <li *ngFor="#region of regions" (click)="onSelect(region)">
         {{region.name}}
@@ -41,12 +41,15 @@ import {RegionService} from "../services/region.service";
 export class RegionSearchComponent {
 
     errorMessage;
+
+    private _inputValue:string = '';
     regions:Region[];
 
     constructor(private _regionService:RegionService) {
     }
 
     search(query:string) {
+        this._inputValue = query;
         if (query == null || query.length < 2) {
             this.regions = [];
             return;
@@ -61,6 +64,12 @@ export class RegionSearchComponent {
 
     onSelect(region:Region){
         this._regionService.select(region);
+        this.clear();
+    }
+
+    clear():void {
+        this.regions = [];
+        this._inputValue = '';
     }
 
 }
