@@ -31,7 +31,8 @@ module.exports.handler = function (event, context) {
         return {
           id: currentValue["id"],
           name: currentValue["name"],
-          type: currentValue["type"]
+          type: currentValue["type"],
+          area: currentValue["area"]
         };
       });
       context.succeed(response);

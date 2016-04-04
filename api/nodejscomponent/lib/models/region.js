@@ -10,7 +10,8 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       unique: "compIndex"
     },
-    description: DataTypes.TEXT
+    description: DataTypes.TEXT,
+    area: DataTypes.JSON
   });
 
   Region.belongsToMany(
