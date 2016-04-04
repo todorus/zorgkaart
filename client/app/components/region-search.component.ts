@@ -24,6 +24,11 @@ import {RegionService} from "../services/region.service";
             border-top: none;
             cursor: pointer;
         }
+        ul.regions li:hover {
+            color: #FFF;
+            border: 1px solid #35886F;
+            background: #43AA8B;
+        }
     `
     ]
 })

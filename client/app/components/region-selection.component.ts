@@ -16,6 +16,10 @@ import {RegionService} from "../services/region.service";
         ul.regions li {
             cursor: pointer;
         }
+        ul.regions li:hover {
+            background: #2D755F;
+            border: solid 1px #255F4E;
+        }
     `
     ]
 })
@@ -28,7 +32,6 @@ export class RegionSelectionComponent {
     }
 
     onDeselect(region:Region) {
-        console.log("deselect");
         this._regionService.deselect(region);
     }
 

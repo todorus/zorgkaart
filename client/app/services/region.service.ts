@@ -19,7 +19,7 @@ export class RegionService {
     fetch(query:string):Observable {
         let params:URLSearchParams = new URLSearchParams();
         params.set('query', query);
-        params.set('limit', '10');
+        params.set('limit', '3');
 
         return this._http.get(this._regionsUrl, {search: params})
             .map(res => <Region[]> res.json())
