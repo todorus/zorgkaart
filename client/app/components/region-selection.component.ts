@@ -9,10 +9,10 @@ import {RegionService} from "../services/region.service";
       <li *ngFor="#region of _selection" (click)="onDeselect(region)">
         {{region.name}}
         <span [ngSwitch]="region.type">
-          <span *ngSwitchWhen="1">(Postcode)</span>
-          <span *ngSwitchWhen="100">(Plaats)</span>
-          <span *ngSwitchWhen="200">(Gemeente)</span>
-          <span *ngSwitchWhen="300">(Provincie)</span>
+          <span *ngSwitchWhen="1"></span>
+          <span *ngSwitchWhen="100"></span>
+          <span *ngSwitchWhen="200">(Gem)</span>
+          <span *ngSwitchWhen="300">(Prov)</span>
         </span>
       </li>
     </ul>
