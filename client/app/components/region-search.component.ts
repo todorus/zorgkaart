@@ -49,14 +49,20 @@ export class RegionSearchComponent {
     }
 
     private onKey(event:KeyboardEvent, query:string):void {
-        if(event.keyCode == 13){
-            this.onEnter();
-            return;
+        switch (event.keyCode){
+            case 13:
+                this.onEnter();
+                break;
+            default:
+                this.search(query);
         }
-        this.search(query);
     }
 
     private search(query:string) {
+        if(query == this._inputValue){
+            return;
+        }
+
         this._inputValue = query;
         if (query == null || query.length < 2) {
             this.regions = [];
