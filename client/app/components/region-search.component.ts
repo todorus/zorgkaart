@@ -5,9 +5,9 @@ import {RegionService} from "../services/region.service";
 @Component({
     selector: 'region-search',
     template: `
-    <input class="regionquery" #query [value]="_inputValue" (keyup)="search(query.value)"/>
+    <input class="regionquery" #query [value]="_inputValue" (keyup)="onKey($event, query.value)"/>
     <ul class="regions">
-      <li *ngFor="#region of regions" (click)="onSelect(region)">
+      <li *ngFor="#region of regions" (click)="select(region)">
         {{region.name}}
         <span [ngSwitch]="region.type">
           <span *ngSwitchWhen="1">(Postcode)</span>
@@ -43,12 +43,20 @@ export class RegionSearchComponent {
     errorMessage;
 
     private _inputValue:string = '';
-    regions:Region[];
+    regions:Region[] = [];
 
     constructor(private _regionService:RegionService) {
     }
 
-    search(query:string) {
+    private onKey(event:KeyboardEvent, query:string):void {
+        if(event.keyCode == 13){
+            this.onEnter();
+            return;
+        }
+        this.search(query);
+    }
+
+    private search(query:string) {
         this._inputValue = query;
         if (query == null || query.length < 2) {
             this.regions = [];
@@ -62,12 +70,18 @@ export class RegionSearchComponent {
             );
     }
 
-    onSelect(region:Region){
+    private select(region:Region){
         this._regionService.select(region);
         this.clear();
     }
 
-    clear():void {
+    private onEnter(){
+       if(this.regions.length > 0){
+           this.select(this.regions[0]);
+       }
+    }
+
+    private clear():void {
         this.regions = [];
         this._inputValue = '';
     }
