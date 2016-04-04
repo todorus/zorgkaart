@@ -3,17 +3,23 @@ import {Region} from '../model/region';
 import {RegionService} from "../services/region.service";
 
 @Component({
-  selector: 'region-search',
-  template: `
-    <input class="regionquery" #query (keyup)="search(query.value)"/>
+    selector: 'region-search',
+    template: `
+    <input class="regionquery" #query [value]="_inputValue" (keyup)="onKey($event, query.value)"/>
     <ul class="regions">
-      <li *ngFor="#region of regions">
+      <li *ngFor="#region of regions" (click)="select(region)">
         {{region.name}}
+        <span [ngSwitch]="region.type">
+          <span *ngSwitchWhen="1">(Postcode)</span>
+          <span *ngSwitchWhen="100">(Plaats)</span>
+          <span *ngSwitchWhen="200">(Gemeente)</span>
+          <span *ngSwitchWhen="300">(Provincie)</span>
+        </span>
       </li>
     </ul>
   `,
-  styles:[
-    `
+    styles: [
+        `
         input.regionquery {
             width: 100%;
         }
@@ -22,28 +28,62 @@ import {RegionService} from "../services/region.service";
         }
         ul.regions li {
             border-top: none;
+            cursor: pointer;
+        }
+        ul.regions li:hover {
+            color: #FFF;
+            border: 1px solid #35886F;
+            background: #43AA8B;
         }
     `
-  ]
+    ]
 })
 export class RegionSearchComponent {
 
-  errorMessage;
-  regions: Region[];
+    errorMessage;
 
-  constructor(private _regionService: RegionService) { }
+    private _inputValue:string = '';
+    regions:Region[] = [];
 
-  search(query: string) {
-    if(query == null || query.length < 2){
-      this.regions = [];
-      return;
+    constructor(private _regionService:RegionService) {
     }
 
-    this._regionService.fetch(query)
-        .subscribe(
-          regions => this.regions = regions,
-          error =>  this.errorMessage = <any>error
-        );
-  }
+    private onKey(event:KeyboardEvent, query:string):void {
+        if(event.keyCode == 13){
+            this.onEnter();
+            return;
+        }
+        this.search(query);
+    }
+
+    private search(query:string) {
+        this._inputValue = query;
+        if (query == null || query.length < 2) {
+            this.regions = [];
+            return;
+        }
+
+        this._regionService.fetch(query)
+            .subscribe(
+                regions => this.regions = regions,
+                error => this.errorMessage = <any>error
+            );
+    }
+
+    private select(region:Region){
+        this._regionService.select(region);
+        this.clear();
+    }
+
+    private onEnter(){
+       if(this.regions.length > 0){
+           this.select(this.regions[0]);
+       }
+    }
+
+    private clear():void {
+        this.regions = [];
+        this._inputValue = '';
+    }
 
 }

@@ -1,9 +1,13 @@
+enum Type {
+    Zip = 1,
+    Place = 100,
+    Municipality = 200,
+    Province = 300
+}
+
 export class Region {
 
-    public static get TYPE_ZIP():number { return 1; }
-    public static get TYPE_PLACE():number { return 100; }
-    public static get TYPE_MUNICIPALITY():number { return 200; }
-    public static get TYPE_PROVINCE():number { return 300; }
+    static Type = Type;
 
     id: number;
     name: string;
@@ -12,16 +16,16 @@ export class Region {
     typeAsString():string {
         var result:string = null;
         switch (this.type){
-            case Region.TYPE_ZIP:
+            case Type.Zip:
                 result = "postcode";
                 break;
-            case Region.TYPE_PLACE:
+            case Type.Place:
                 result = "plaats";
                 break;
-            case Region.TYPE_MUNICIPALITY:
+            case Type.Municipality:
                 result = "gemeente";
                 break;
-            case Region.TYPE_PROVINCE:
+            case Type.Province:
                 result = "provincie";
                 break;
         }
