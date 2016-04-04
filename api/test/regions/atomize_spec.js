@@ -19,13 +19,13 @@ describe("Region", function () {
             [
               {id: 1, name: "Maas", type: Region.TYPE_PLACE},
               {id: 2, name: "Rijn", type: Region.TYPE_PLACE},
-              {id: 10, name: '1001', type: Region.TYPE_ZIP, parents:[{id: 1, name: "Maas", type: Region.TYPE_PLACE}]},
-              {id: 11, name: '1002', type: Region.TYPE_ZIP, parents:[{id: 1, name: "Maas", type: Region.TYPE_PLACE}]},
-              {id: 12, name: '1003', type: Region.TYPE_ZIP, parents:[{id: 1, name: "Maas", type: Region.TYPE_PLACE},{id: 2, name: "Rijn", type: Region.TYPE_PLACE}]},
-              {id: 13, name: '1004', type: Region.TYPE_ZIP, parents:[{id: 2, name: "Rijn", type: Region.TYPE_PLACE}]},
-              {id: 14, name: '1005', type: Region.TYPE_ZIP, parents:[{id: 2, name: "Rijn", type: Region.TYPE_PLACE}]},
-              {id: 15, name: '1006', type: Region.TYPE_ZIP},
-              {id: 16, name: '1007', type: Region.TYPE_ZIP}
+              {id: 10, name: '1001', type: Region.TYPE_ZIP, area: {properties: {name: '1001'}, geometry: [[1,1]]}, parents:[{id: 1, name: "Maas", type: Region.TYPE_PLACE}]},
+              {id: 11, name: '1002', type: Region.TYPE_ZIP, area: {properties: {name: '1002'}, geometry: [[2,1]]}, parents:[{id: 1, name: "Maas", type: Region.TYPE_PLACE}]},
+              {id: 12, name: '1003', type: Region.TYPE_ZIP, area: {properties: {name: '1003'}, geometry: [[3,1]]}, parents:[{id: 1, name: "Maas", type: Region.TYPE_PLACE},{id: 2, name: "Rijn", type: Region.TYPE_PLACE}]},
+              {id: 13, name: '1004', type: Region.TYPE_ZIP, area: {properties: {name: '1004'}, geometry: [[4,1]]}, parents:[{id: 2, name: "Rijn", type: Region.TYPE_PLACE}]},
+              {id: 14, name: '1005', type: Region.TYPE_ZIP, area: {properties: {name: '1005'}, geometry: [[5,1]]}, parents:[{id: 2, name: "Rijn", type: Region.TYPE_PLACE}]},
+              {id: 15, name: '1006', type: Region.TYPE_ZIP, area: {properties: {name: '1006'}, geometry: [[6,1]]}},
+              {id: 16, name: '1007', type: Region.TYPE_ZIP, area: {properties: {name: '1007'}, geometry: [[7,1]]}}
             ]
           )
         }
@@ -65,11 +65,11 @@ describe("Region", function () {
       }
 
       var matchingRegions = [
-        {id: 10, name: '1001', type: Region.TYPE_ZIP},
-        {id: 11, name: '1002', type: Region.TYPE_ZIP},
-        {id: 12, name: '1003', type: Region.TYPE_ZIP},
-        {id: 13, name: '1004', type: Region.TYPE_ZIP},
-        {id: 14, name: '1005', type: Region.TYPE_ZIP},
+        {id: 10, name: '1001', type: Region.TYPE_ZIP, area: {properties: {name: '1001'}, geometry: [[1,1]]}},
+        {id: 11, name: '1002', type: Region.TYPE_ZIP, area: {properties: {name: '1002'}, geometry: [[2,1]]}},
+        {id: 12, name: '1003', type: Region.TYPE_ZIP, area: {properties: {name: '1003'}, geometry: [[3,1]]}},
+        {id: 13, name: '1004', type: Region.TYPE_ZIP, area: {properties: {name: '1004'}, geometry: [[4,1]]}},
+        {id: 14, name: '1005', type: Region.TYPE_ZIP, area: {properties: {name: '1005'}, geometry: [[5,1]]}},
       ]
 
       it("should return a list of all zipcodes ordered by name", function (done) {
@@ -88,37 +88,36 @@ describe("Region", function () {
       });
     })
 
-  })
+    describe("with zipcodes mixed with higher Regions", function() {
 
-  describe("with zipcodes mixed with higher Regions", function() {
+      var event = {
+        regions: [ 1, 15, 16]
+      }
 
-    var event = {
-      regions: [ 1, 15, 16]
-    }
+      var matchingRegions = [
+        {id: 10, name: '1001', type: Region.TYPE_ZIP, area: {properties: {name: '1001'}, geometry: [[1,1]]}},
+        {id: 11, name: '1002', type: Region.TYPE_ZIP, area: {properties: {name: '1002'}, geometry: [[2,1]]}},
+        {id: 12, name: '1003', type: Region.TYPE_ZIP, area: {properties: {name: '1003'}, geometry: [[3,1]]}},
 
-    var matchingRegions = [
-      {id: 10, name: '1001', type: Region.TYPE_ZIP},
-      {id: 11, name: '1002', type: Region.TYPE_ZIP},
-      {id: 12, name: '1003', type: Region.TYPE_ZIP},
+        {id: 15, name: '1006', type: Region.TYPE_ZIP, area: {properties: {name: '1006'}, geometry: [[6,1]]}},
+        {id: 16, name: '1007', type: Region.TYPE_ZIP, area: {properties: {name: '1007'}, geometry: [[7,1]]}}
+      ]
 
-      {id: 15, name: '1006', type: Region.TYPE_ZIP},
-      {id: 16, name: '1007', type: Region.TYPE_ZIP}
-    ]
+      it("should return a list of all zipcodes ordered by name", function (done) {
+        var context = new MockContext()
+        context.then(
+          function (context) {
 
-    it("should return a list of all zipcodes ordered by name", function (done) {
-      var context = new MockContext()
-      context.then(
-        function (context) {
+            expect(context.error).toBe(null);
+            expect(context.response).toEqual(matchingRegions);
 
-          expect(context.error).toBe(null);
-          expect(context.response).toEqual(matchingRegions);
+            done();
+          }
+        );
 
-          done();
-        }
-      );
-
-      subject.handler(event, context);
-    });
+        subject.handler(event, context);
+      });
+    })
   })
 
 });
