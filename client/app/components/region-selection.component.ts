@@ -26,6 +26,9 @@ import {RegionService} from "../services/region.service";
             background: #2D755F;
             border: solid 1px #255F4E;
         }
+        ul.regions li span {
+            font-size: 10px;
+        }
     `
     ]
 })
