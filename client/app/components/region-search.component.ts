@@ -3,17 +3,17 @@ import {Region} from '../model/region';
 import {RegionService} from "../services/region.service";
 
 @Component({
-  selector: 'region-search',
-  template: `
+    selector: 'region-search',
+    template: `
     <input class="regionquery" #query (keyup)="search(query.value)"/>
     <ul class="regions">
-      <li *ngFor="#region of regions">
+      <li *ngFor="#region of regions" (click)="onSelect(region)">
         {{region.name}}
       </li>
     </ul>
   `,
-  styles:[
-    `
+    styles: [
+        `
         input.regionquery {
             width: 100%;
         }
@@ -24,26 +24,31 @@ import {RegionService} from "../services/region.service";
             border-top: none;
         }
     `
-  ]
+    ]
 })
 export class RegionSearchComponent {
 
-  errorMessage;
-  regions: Region[];
+    errorMessage;
+    regions:Region[];
 
-  constructor(private _regionService: RegionService) { }
-
-  search(query: string) {
-    if(query == null || query.length < 2){
-      this.regions = [];
-      return;
+    constructor(private _regionService:RegionService) {
     }
 
-    this._regionService.fetch(query)
-        .subscribe(
-          regions => this.regions = regions,
-          error =>  this.errorMessage = <any>error
-        );
-  }
+    search(query:string) {
+        if (query == null || query.length < 2) {
+            this.regions = [];
+            return;
+        }
+
+        this._regionService.fetch(query)
+            .subscribe(
+                regions => this.regions = regions,
+                error => this.errorMessage = <any>error
+            );
+    }
+
+    onSelect(region:Region){
+        this._regionService.select(region);
+    }
 
 }
