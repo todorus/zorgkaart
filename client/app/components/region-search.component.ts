@@ -22,6 +22,7 @@ import {RegionService} from "../services/region.service";
         }
         ul.regions li {
             border-top: none;
+            cursor: pointer;
         }
     `
     ]
