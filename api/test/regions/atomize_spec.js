@@ -61,7 +61,7 @@ describe("Region", function () {
     describe("with Regions that share zipcodes", function() {
 
       var event = {
-        regions: [ 1, 2]
+        regions: "[ 1, 2]"
       }
 
       var matchingRegions = [
@@ -91,7 +91,7 @@ describe("Region", function () {
     describe("with zipcodes mixed with higher Regions", function() {
 
       var event = {
-        regions: [ 1, 15, 16]
+        regions: "[ 1, 15, 16]"
       }
 
       var matchingRegions = [

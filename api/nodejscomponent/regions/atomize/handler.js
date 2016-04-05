@@ -18,7 +18,10 @@ var Region = db["Region"];
 module.exports.handler = function (event, context) {
 
   var type = Region.TYPE_ZIP;
-  var ids = event["regions"].join();
+  // Serverless does not support parsed query parameters, but rather a string. This is a workaround until this issue
+  // is resolved
+  var idArray = JSON.parse(event["regions"])
+  var ids = idArray.join();
 
   db.sequelize.query(
     "SELECT * FROM \"Regions\" "+
