@@ -1,5 +1,6 @@
 {
   "name": "atomize",
+  "runtime": "nodejs",
   "customName": false,
   "customRole": false,
   "handler": "regions/atomize/handler.handler",

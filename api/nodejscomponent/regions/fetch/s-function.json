@@ -1,5 +1,6 @@
 {
   "name": "fetch",
+  "runtime": "nodejs",
   "handler": "regions/fetch/handler.handler",
   "timeout": 6,
   "memorySize": 1024,
