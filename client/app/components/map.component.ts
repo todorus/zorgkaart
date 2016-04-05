@@ -21,12 +21,7 @@ export class MapComponent {
 
     ngOnInit(){
         this.map = new L.map('map-inner', {zoomControl:false});
-
-        let netherlandsBounds = L.latLngBounds(
-                L.latLng(53.667019, 3.273926),
-                L.latLng(50.509497, 7.404785)
-            );
-        this.map.fitBounds(netherlandsBounds, this.BOUNDS_OPTIONS);
+        this._defaultZoom();
 
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidG9kb3J1cyIsImEiOiJjaWs4anUwZmswMndqdHhrd2d0bXFtMndjIn0.B-Btjtonfl0WE1sDNcu_9A', {
             maxZoom: 18,
@@ -37,14 +32,31 @@ export class MapComponent {
         }).addTo(this.map);
     }
 
+    private _defaultZoom(){
+        let netherlandsBounds = L.latLngBounds(
+            L.latLng(53.667019, 3.273926),
+            L.latLng(50.509497, 7.404785)
+        );
+        this.map.fitBounds(netherlandsBounds, this.BOUNDS_OPTIONS);
+    }
+
     private _processSelection(selection: Region[]):void {
-        console.log("map processing", selection);
         if(selection.length > 0){
             this._showRegion(selection[selection.length-1]);
+        } else {
+            if(this.layer != null) {
+                this.map.removeLayer(this.layer);
+            }
+            this._defaultZoom();
         }
     }
 
     private _showRegion(region:Region){
+        if(region.area == null){
+            console.warn("Region has no area", region);
+            return;
+        }
+
         if(this.layer != null){
             this.map.removeLayer(this.layer);
         }
