@@ -10,7 +10,7 @@ import {Region} from "../model/region";
 })
 export class MapComponent {
 
-    private BOUNDS_OPTIONS = {paddingTopLeft: [400, 0]};
+    private BOUNDS_OPTIONS = {paddingTopLeft: [400, 10], paddingBottomRight: [10,10]};
 
     layer;
     map;
