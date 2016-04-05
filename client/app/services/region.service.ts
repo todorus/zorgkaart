@@ -40,6 +40,7 @@ export class RegionService {
 
         this._selectionStore.push(region);
         this._selectionSubject.next(this._selectionStore);
+        this.atomize(this._selectionStore);
     }
 
     deselect(region:Region):void {
@@ -48,9 +49,14 @@ export class RegionService {
             if (this._selectionStore[i].id == region.id) {
                 this._selectionStore.splice(i, 1);
                 this._selectionSubject.next(this._selectionStore);
+                this.atomize(this._selectionStore);
                 return;
             }
         }
+    }
+
+    private atomize(regions: Region[]){
+        //TODO call the atomize function on the API and save the result to an observable
     }
 
     private isInSelection(region:Region):boolean {

@@ -12,6 +12,7 @@ export class Region {
     id: number;
     name: string;
     type: number;
+    area: any;
 
     // Client
     focused: boolean = false;
