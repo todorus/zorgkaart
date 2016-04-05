@@ -4,7 +4,7 @@
   "customName": false,
   "customRole": false,
   "handler": "regions/atomize/handler.handler",
-  "timeout": 6,
+  "timeout": 30,
   "memorySize": 1024,
   "custom": {
     "excludePatterns": [],
@@ -19,7 +19,9 @@
       "apiKeyRequired": false,
       "requestParameters": {},
       "requestTemplates": {
-        "application/json": ""
+        "application/json": {
+          "regions" : "$input.params('regions')"
+        }
       },
       "responses": {
         "400": {
