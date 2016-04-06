@@ -16,7 +16,8 @@
     "pg": "^4.4.4",
     "pg-hstore": "^2.3.2",
     "sequelize": "^3.19.2",
-    "serverless-lambda-prune-plugin": "^1.1.0"
+    "serverless-lambda-prune-plugin": "^1.1.0",
+    "turf": "^2.0.2"
   },
   "devDependencies": {
     "expect": "^1.14.0",
