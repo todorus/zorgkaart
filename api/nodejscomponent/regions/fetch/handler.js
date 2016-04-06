@@ -17,13 +17,20 @@ var Region = db["Region"];
 // Lambda Handler
 module.exports.handler = function (event, context) {
 
-  var where = null;
-  if (event.query != undefined && event.query != null) {
-    where = {
-      name: {
-        $iLike: event.query + '%'
+  var where = {
+    $or: {
+      area: {
+        $not: null
+      },
+      type: {
+        $not: Region.TYPE_ZIP
       }
-    };
+    }
+  };
+  if (event.query != undefined && event.query != null) {
+    where["name"] = {
+      $iLike: event.query + '%'
+    }
   }
 
   var offset = 0;

@@ -23,6 +23,9 @@ describe("Region", function () {
               {id: 7, name: 'Overblaak', type: Region.TYPE_PLACE, area: {properties: {name: 'Overblaak'}, geometry: [[7,1]]}},
               {id: 8, name: 'Ossdam', type: Region.TYPE_PLACE, area: {properties: {name: 'Ossdam'}, geometry: [[8,1]]}},
               {id: 9, name: 'Oss', type: Region.TYPE_PLACE, area: {properties: {name: 'Oss'}, geometry: [[9,1]]}},
+              {id: 10, name: 'Ossdont', type: Region.TYPE_ZIP, area: null},
+              {id: 11, name: 'Maasdont', type: Region.TYPE_ZIP, area: null},
+              {id: 12, name: 'ZZZdo', type: Region.TYPE_PLACE, area: null},
             ]
           )
         }
@@ -52,9 +55,10 @@ describe("Region", function () {
       {id: 9, name: 'Oss', type: Region.TYPE_PLACE, area: {properties: {name: 'Oss'}, geometry: [[9,1]]}},
       {id: 8, name: 'Ossdam', type: Region.TYPE_PLACE, area: {properties: {name: 'Ossdam'}, geometry: [[8,1]]}},
       {id: 7, name: 'Overblaak', type: Region.TYPE_PLACE, area: {properties: {name: 'Overblaak'}, geometry: [[7,1]]}},
+      {id: 12, name: 'ZZZdo', type: Region.TYPE_PLACE, area: null},
     ]
 
-    it("should return a list of all Regions ordered by name", function (done) {
+    it("should return a list of all Regions ordered by name and filters those without an area", function (done) {
       var context = new MockContext()
       context.then(
         function (context) {
@@ -75,7 +79,7 @@ describe("Region", function () {
 
     describe("when a match is found for a query", function () {
 
-      it("should return a list of the results ordered by length", function (done) {
+      it("should return a list of the results ordered by length and filters those without an area", function (done) {
         var event = {
           query: "oss"
         }
@@ -99,7 +103,7 @@ describe("Region", function () {
         subject.handler(event, context);
       });
 
-      it("should return a list of the results ordered by name", function (done) {
+      it("should return a list of the results ordered by name and filters those without an area", function (done) {
         var event = {
           query: "maas"
         }
