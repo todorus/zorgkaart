@@ -3,7 +3,6 @@ require('../spec_helper.js');
 var subject = require("../../nodejscomponent/regions/atomize/handler.js");
 var db = require("../../nodejscomponent/lib/models");
 var Region = db["Region"];
-var RegionToRegion = db["RegionToRegion"];
 
 describe("Region", function () {
 
@@ -17,33 +16,17 @@ describe("Region", function () {
           // Define zipcodes
           return Region.bulkCreate(
             [
-              {id: 1, name: "Maas", type: Region.TYPE_PLACE},
-              {id: 2, name: "Rijn", type: Region.TYPE_PLACE},
-              {id: 10, name: '1001', type: Region.TYPE_ZIP, area: {properties: {name: '1001'}, geometry: [[1,1]]}, parents:[{id: 1, name: "Maas", type: Region.TYPE_PLACE}]},
-              {id: 11, name: '1002', type: Region.TYPE_ZIP, area: {properties: {name: '1002'}, geometry: [[2,1]]}, parents:[{id: 1, name: "Maas", type: Region.TYPE_PLACE}]},
-              {id: 12, name: '1003', type: Region.TYPE_ZIP, area: {properties: {name: '1003'}, geometry: [[3,1]]}, parents:[{id: 1, name: "Maas", type: Region.TYPE_PLACE},{id: 2, name: "Rijn", type: Region.TYPE_PLACE}]},
-              {id: 13, name: '1004', type: Region.TYPE_ZIP, area: {properties: {name: '1004'}, geometry: [[4,1]]}, parents:[{id: 2, name: "Rijn", type: Region.TYPE_PLACE}]},
-              {id: 14, name: '1005', type: Region.TYPE_ZIP, area: {properties: {name: '1005'}, geometry: [[5,1]]}, parents:[{id: 2, name: "Rijn", type: Region.TYPE_PLACE}]},
-              {id: 15, name: '1006', type: Region.TYPE_ZIP, area: {properties: {name: '1006'}, geometry: [[6,1]]}},
-              {id: 16, name: '1007', type: Region.TYPE_ZIP, area: {properties: {name: '1007'}, geometry: [[7,1]]}}
+              {id: 1, name: "Maas", type: Region.TYPE_PLACE, zips: [1001, 1002, 1003]},
+              {id: 2, name: "Rijn", type: Region.TYPE_PLACE, zips: [1003, 1004, 1005]},
+              {id: 10, name: '1001', type: Region.TYPE_ZIP, area: {properties: {name: '1001'}, geometry: [[1,1]]}, zips: [1001]},
+              {id: 11, name: '1002', type: Region.TYPE_ZIP, area: {properties: {name: '1002'}, geometry: [[2,1]]}, zips: [1002]},
+              {id: 12, name: '1003', type: Region.TYPE_ZIP, area: {properties: {name: '1003'}, geometry: [[3,1]]}, zips: [1003]},
+              {id: 13, name: '1004', type: Region.TYPE_ZIP, area: {properties: {name: '1004'}, geometry: [[4,1]]}, zips: [1004]},
+              {id: 14, name: '1005', type: Region.TYPE_ZIP, area: {properties: {name: '1005'}, geometry: [[5,1]]}, zips: [1005]},
+              {id: 15, name: '1006', type: Region.TYPE_ZIP, area: {properties: {name: '1006'}, geometry: [[6,1]]}, zips: [1006]},
+              {id: 16, name: '1007', type: Region.TYPE_ZIP, area: {properties: {name: '1007'}, geometry: [[7,1]]}, zips: [1007]}
             ]
           )
-        }
-      ).then(
-        function (result) {
-          return RegionToRegion.bulkCreate(
-            [
-              {ChildId: 10, ParentId: 1},
-              {ChildId: 11, ParentId: 1},
-              {ChildId: 12, ParentId: 1},
-              {ChildId: 12, ParentId: 2},
-              {ChildId: 13, ParentId: 2},
-              {ChildId: 14, ParentId: 2}
-            ]
-          )
-        },
-        function (error) {
-          throw error;
         }
       ).then(
         function(result){
