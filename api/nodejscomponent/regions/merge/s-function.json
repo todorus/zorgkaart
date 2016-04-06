@@ -6,7 +6,7 @@
   "customRole": false,
   "handler": "regions/merge/handler.handler",
   "timeout": 10,
-  "memorySize": 1024,
+  "memorySize": 1536,
   "authorizer": {},
   "custom": {
     "excludePatterns": []
