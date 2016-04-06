@@ -11,17 +11,9 @@ module.exports = function(sequelize, DataTypes) {
       unique: "compIndex"
     },
     description: DataTypes.TEXT,
-    area: DataTypes.JSON
+    area: DataTypes.JSON,
+    zips: DataTypes.JSON
   });
-
-  Region.belongsToMany(
-    Region,
-    {
-      as: 'Parents',
-      foreignKey: 'ChildId',
-      through: 'RegionToRegions'
-    }
-  );
 
   Region.TYPE_ZIP = 1;
   Region.TYPE_PLACE = 100;
