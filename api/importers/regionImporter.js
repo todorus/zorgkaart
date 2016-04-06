@@ -1,95 +1,89 @@
-var json = JSON.parse(require('fs').readFileSync(__dirname +'/pc_gem_prov.json', 'utf8'));
-
-// Require Logic
-var db = require(__dirname + '/../nodejscomponent/lib/models');
+var fs = require('fs'),
+  JSONStream = require('JSONStream'),
+  es = require('event-stream'),
+  db = require(__dirname + '/../nodejscomponent/lib/models');
 
 var Region = db["Region"];
 
-//{
-//  "PC": 1000,
-//  "PLAATS": "Amsterdam",
-//  "GEMEENTE": "Amsterdam",
-//  "PROVINCIE": "Noord Holland",
-//  "pc2": 1000
-//}
+var jsonData = 'pc_gem_prov.json',
+  stream = fs.createReadStream(jsonData, {encoding: 'utf8'}),
+  parser = JSONStream.parse('*');
 
-function findOrCreate(properties){
-  return Region.findAndCountAll({where: properties}).then(
-    function(result){
-      if(result.count == 0){
-        return Region.create(properties);
-      } else {
-        return Region.findOne(properties);
-      }
-    }
-  )
-}
+var zipsCache = [];
+var placesCache = {};
+var municipalityCache = {};
+var provinceCache = {};
 
-function addData(data){
-  return findOrCreate(
-    {
-      name: String(data["PC"]),
-      type: Region.TYPE_ZIP
-    }
-  ).then(
-    function(result){
-      zip = result;
-
-      // PLACE
-      return findOrCreate(
-        {
-          name: String(data["PLAATS"]),
-          type: Region.TYPE_PLACE
-        }
-      )
-    }
-  ).then(
-    function(result){
-      var place = result;
-      zip.addParent(place);
-
-      // MUNICIPALITY
-      return findOrCreate(
-        {
-          name: String(data["GEMEENTE"]),
-          type: Region.TYPE_MUNICIPALITY
-        }
-      );
-    }
-  ).then(
-    function(result){
-      var municipality = result;
-      zip.addParent(municipality);
-
-      return findOrCreate(
-        {
-          name: String(data["PROVINCIE"]),
-          type: Region.TYPE_PROVINCE
-        }
-      )
-    }
-  ).then(
-    function(result){
-      var province = result;
-      return zip.addParent(province);
-    }
-  )
-}
-
-
-
-function loopData(index, json){
-  if(index >= json.length){
-    return null;
+stream.on('end',function () {
+   for(var i = 0; i < zipsCache.length ; i++){
+     var region = Region.build();
+     region.name = zipsCache[i];
+     region.type = Region.TYPE_ZIP;
+     region.zips = [zipsCache[i]];
+     region.save();
+   }
+  for (var p in placesCache) {
+    var cached = placesCache[p];
+    var region = Region.build();
+    region.name = cached["name"];
+    region.type = Region.TYPE_PLACE;
+    region.zips = cached["zips"];
+    region.save();
+  }
+  for (var p in municipalityCache) {
+    var cached = municipalityCache[p];
+    var region = Region.build();
+    region.name = cached["name"];
+    region.type = Region.TYPE_MUNICIPALITY;
+    region.zips = cached["zips"];
+    region.save();
+  }
+  for (var p in provinceCache) {
+    var cached = provinceCache[p];
+    var region = Region.build();
+    region.name = cached["name"];
+    region.type = Region.TYPE_PROVINCE;
+    region.zips = cached["zips"];
+    region.save();
   }
 
-  data = json[index];
-  return addData(data).then(
-    function(result){
-      index++
-      return loopData(index, json);
-    }
-  )
-}
+});
 
-loopData(0, json);
+stream
+  .pipe(parser)
+  .pipe(es.mapSync(function (data) {
+    var zip = data["PC"];
+    var place = data["PLAATS"];
+    var municipality = data["GEMEENTE"];
+    var province = data["PROVINCIE"];
+
+    zipsCache.push(zip);
+
+    if(!(place in placesCache)){
+      placesCache[place] = {
+        id: null,
+        name: place,
+        zips: []
+      };
+    }
+    placesCache[place]["zips"].push(zip);
+
+    if(!(municipality in municipalityCache)){
+      municipalityCache[municipality] = {
+        id: null,
+        name: municipality,
+        zips: []
+      };
+    }
+    municipalityCache[municipality]["zips"].push(zip);
+
+    if(!(province in provinceCache)){
+      provinceCache[province] = {
+        id: null,
+        name: province,
+        zips: []
+      };
+    }
+    provinceCache[province]["zips"].push(zip);
+  }));
+
