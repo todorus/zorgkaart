@@ -8,10 +8,14 @@ import {Subject} from "rxjs/Subject";
 export class RegionService {
 
     private _regionsUrl = 'https://c0x7s177j4.execute-api.eu-west-1.amazonaws.com/development/regions';  // URL to web api
+    private _mergeUrl = this._regionsUrl+'/merge';
 
     private _selectionStore:Region[] = [];
     private _selectionSubject:Subject<Region[]> = new Subject<Region[]>()
     selection$ = this._selectionSubject.asObservable();
+
+    private _mergedSubject:Subject<Region> = new Subject<Region>();
+    merged$ = this._mergedSubject.asObservable();
 
     constructor(private _http:Http) {
     }
@@ -40,7 +44,7 @@ export class RegionService {
 
         this._selectionStore.push(region);
         this._selectionSubject.next(this._selectionStore);
-        this.atomize(this._selectionStore);
+        this.updateMerged();
     }
 
     deselect(region:Region):void {
@@ -49,14 +53,33 @@ export class RegionService {
             if (this._selectionStore[i].id == region.id) {
                 this._selectionStore.splice(i, 1);
                 this._selectionSubject.next(this._selectionStore);
-                this.atomize(this._selectionStore);
+                this.updateMerged();
                 return;
             }
         }
     }
 
-    private atomize(regions: Region[]){
-        //TODO call the atomize function on the API and save the result to an observable
+    private updateMerged(){
+        this.merge(this._selectionStore)
+            .subscribe(
+                region => this._mergedSubject.next(region),
+                error => console.log(<any>error)
+            );;
+    }
+
+    private merge(regions: Region[]){
+        //TODO call the merge function on the API and save the result to an observable
+        let ids = [];
+        for(let i:Number = 0; i < regions.length; i++){
+            ids.push(regions[i].id);
+        }
+
+        let params:URLSearchParams = new URLSearchParams();
+        params.set('regions', '['+ids.toString()+']');
+
+        return this._http.get(this._mergeUrl, {search: params})
+            .map(res => <Region[]> res.json())
+            .catch(this.handleError);
     }
 
     private isInSelection(region:Region):boolean {

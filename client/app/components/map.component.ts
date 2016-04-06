@@ -16,7 +16,7 @@ export class MapComponent {
     map;
 
     constructor(private _regionService:RegionService) {
-        _regionService.selection$.subscribe(selection => this._processSelection(selection));
+        _regionService.merged$.subscribe(merged => this._showRegion(merged));
     }
 
     ngOnInit(){
@@ -52,6 +52,9 @@ export class MapComponent {
     }
 
     private _showRegion(region:Region){
+        if(region == null){
+            console.warn("No region to show", region);
+        }
         if(region.area == null){
             console.warn("Region has no area", region);
             return;
