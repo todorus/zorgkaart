@@ -60,6 +60,11 @@ export class RegionService {
     }
 
     private updateMerged(){
+        if(this._selectionStore.length == 0){
+            this._mergedSubject.next(null);
+            return;
+        }
+
         this.merge(this._selectionStore)
             .subscribe(
                 region => this._mergedSubject.next(region),

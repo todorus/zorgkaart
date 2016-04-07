@@ -52,16 +52,19 @@ export class MapComponent {
     }
 
     private _showRegion(region:Region){
+        if(this.layer != null){
+            this.map.removeLayer(this.layer);
+        }
+
         if(region == null){
             console.warn("No region to show", region);
+            this._defaultZoom();
+            return;
         }
         if(region.area == null){
             console.warn("Region has no area", region);
+            this._defaultZoom();
             return;
-        }
-
-        if(this.layer != null){
-            this.map.removeLayer(this.layer);
         }
 
         this.layer = L.geoJson(region.area);
