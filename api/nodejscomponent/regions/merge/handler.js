@@ -23,6 +23,7 @@ module.exports.handler = function (event, context) {
   // is resolved
   var idArray = JSON.parse(event["regions"])
   var ids = idArray.join();
+  var areas = [];
 
   db.sequelize.query(
     "SELECT * FROM \"Regions\" WHERE id IN (" + ids + ") ",
@@ -33,10 +34,15 @@ module.exports.handler = function (event, context) {
       var zips = [];
       for(var i = 0; i < result.length; i++){
         var region = result[i];
-        for(var j=0; region.zips != null && j < region.zips.length; j++){
-          var zip = region.zips[j];
-          if(zips.indexOf(zip) == -1){
-            zips.push(zip);
+        if(region.area != null){
+          areas.push(region.area);
+        } else {
+          //split it up into zips and try to merge those
+          for (var j = 0; region.zips != null && j < region.zips.length; j++) {
+            var zip = region.zips[j];
+            if (zips.indexOf(zip) == -1) {
+              zips.push(zip);
+            }
           }
         }
       }
@@ -62,8 +68,12 @@ module.exports.handler = function (event, context) {
 
       for(var i = 0; i < result.length; i++){
         var region = result[i];
-        region.area["properties"] = {};
-        polygons["features"].push(region.area);
+        areas.push(region.area);
+      }
+      for(var i = 0; i < areas.length; i++){
+        var area = areas[i];
+        area["properties"] = {};
+        polygons["features"].push(area);
       }
 
       var merged = turf.merge(polygons);
