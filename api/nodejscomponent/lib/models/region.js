@@ -23,12 +23,11 @@ module.exports = function (sequelize, DataTypes) {
         atomize: function (input) {
           var ids = input.join();
           var type = Region.TYPE_ZIP;
-          var query = "SELECT id, name FROM \"Regions\"" +
-            " WHERE type = " + type +
-            " AND id IN (SELECT \"ChildId\" FROM \"RegionToRegions\" WHERE \"ParentId\" IN (" + ids +"))";
+          var query = "SELECT id FROM \"Regions\"" +
+            " WHERE (type = " + type + " AND id in (" + ids +"))" +
+            " OR (type = " + type + " AND id IN (SELECT \"ChildId\" FROM \"RegionToRegions\" WHERE \"ParentId\" IN (" + ids +")))" +
+            " ORDER BY id";
 
-
-          console.log("query", query);
           return sequelize.query(
             query,
             { type: sequelize.QueryTypes.SELECT}
