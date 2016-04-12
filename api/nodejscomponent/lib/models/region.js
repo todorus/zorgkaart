@@ -32,6 +32,18 @@ module.exports = function (sequelize, DataTypes) {
             query,
             { type: sequelize.QueryTypes.SELECT}
           );
+        },
+
+        toJson: function(regions){
+          return regions.map(function (currentValue, index, original) {
+
+            return {
+              id: currentValue["id"] != undefined ? currentValue["id"] : null,
+              name: currentValue["name"] != undefined ? currentValue["name"] : null,
+              type: currentValue["type"] != undefined ? currentValue["type"] : null,
+              area: currentValue["area"] != undefined ? currentValue["area"] : null
+            };
+          });
         }
       }
     }
