@@ -23,35 +23,7 @@ module.exports.handler = function (event, context) {
   var idArray = JSON.parse(event["regions"])
   var ids = idArray.join();
 
-  db.sequelize.query(
-    "SELECT * FROM \"Regions\" WHERE id IN (" + ids + ") ",
-    { type: db.sequelize.QueryTypes.SELECT}
-  ).then(
-    function (result) {
-
-      var zips = [];
-      for(var i = 0; i < result.length; i++){
-        var region = result[i];
-        for(var j=0; region.zips != null && j < region.zips.length; j++){
-          var zip = region.zips[j];
-          if(zips.indexOf(zip) == -1){
-            zips.push(zip);
-          }
-        }
-      }
-
-      var zipsString = "'"+zips.join("','")+"'";
-
-      return db.sequelize.query(
-        "SELECT * FROM \"Regions\" WHERE name IN (" + zipsString + ") ",
-        { type: db.sequelize.QueryTypes.SELECT}
-      )
-
-    },
-    function (error) {
-      context.fail(error);
-    }
-  ).then(
+  Region.atomize(ids).then(
     function (result) {
       var response = result.map(function (currentValue, index, original) {
 
