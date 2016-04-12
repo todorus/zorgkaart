@@ -1,10 +1,10 @@
-require('../spec_helper.js');
+require('../../spec_helper.js');
 
-var subject = require("../../nodejscomponent/regions/fetch/handler.js");
-var db = require("../../nodejscomponent/lib/models");
+var subject = require("../../../nodejscomponent/regions/fetch/handler.js");
+var db = require("../../../nodejscomponent/lib/models");
 var Region = db["Region"];
 
-describe("Region", function () {
+describe("/regions", function () {
 
   before(
     function (done) {
@@ -40,7 +40,7 @@ describe("Region", function () {
     }
   )
 
-  describe("all", function () {
+  describe("/all", function () {
 
     var event = {
     }

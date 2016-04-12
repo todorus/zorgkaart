@@ -1,10 +1,10 @@
-require('../spec_helper.js');
+require('../../spec_helper.js');
 
-var subject = require("../../nodejscomponent/regions/merge/handler.js");
-var db = require("../../nodejscomponent/lib/models");
+var subject = require("../../../nodejscomponent/regions/merge/handler.js");
+var db = require("../../../nodejscomponent/lib/models");
 var Region = db["Region"];
 
-describe("Region", function () {
+describe("/regions", function () {
 
   // testdata from http://turfjs.org/static/docs/module-turf_merge.html
 
@@ -132,7 +132,7 @@ describe("Region", function () {
     }
   )
 
-  describe("merge", function () {
+  describe("/merge", function () {
 
     describe("with Region that has multiple zipcodes", function () {
 
