@@ -13,9 +13,10 @@
     "test": "NODE_ENV=test ./node_modules/.bin/mocha --reporter spec --recursive"
   },
   "dependencies": {
-    "pg": "^4.4.4",
+    "pg": "^4.5.3",
     "pg-hstore": "^2.3.2",
     "sequelize": "^3.19.2",
+    "serverless": "^0.5.3",
     "serverless-lambda-prune-plugin": "^1.1.0",
     "turf": "^2.0.2"
   },
