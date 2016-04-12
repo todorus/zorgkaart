@@ -21,21 +21,11 @@ module.exports.handler = function (event, context) {
   // Serverless does not support parsed query parameters, but rather a string. This is a workaround until this issue
   // is resolved
   var idArray = JSON.parse(event["regions"])
-  var ids = idArray.join();
 
-  Region.atomize(ids).then(
+  Region.atomize(idArray).then(
     function (result) {
-      var response = result.map(function (currentValue, index, original) {
-
-        return {
-          id: currentValue["id"],
-          name: currentValue["name"],
-          type: currentValue["type"],
-          area: currentValue["area"]
-        };
-      });
+      var response = Region.toJson(result);
       context.succeed(response);
-
     },
     function (error) {
       context.fail(error);
