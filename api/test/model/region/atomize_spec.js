@@ -1,11 +1,10 @@
 require('../../spec_helper.js');
 
-var subject = require("../../../nodejscomponent/regions/atomize/handler.js");
 var db = require("../../../nodejscomponent/lib/models");
 var Region = db["Region"];
 var RegionToRegions = db["RegionToRegions"];
 
-describe("/regions", function () {
+describe("Region", function () {
 
   before(
     function (done) {
@@ -56,66 +55,53 @@ describe("/regions", function () {
     }
   )
 
-  describe("/atomize", function () {
+  describe("atomize", function () {
 
     describe("with Regions that share zipcodes", function() {
 
-      var event = {
-        regions: "[ 1, 2]"
-      }
+      var input = [1, 2];
 
       var matchingRegions = [
-        {id: 10, name: null, type: null, area: null},
-        {id: 11, name: null, type: null, area: null},
-        {id: 12, name: null, type: null, area: null},
-        {id: 13, name: null, type: null, area: null},
-        {id: 14, name: null, type: null, area: null},
+        {id: 10},
+        {id: 11},
+        {id: 12},
+        {id: 13},
+        {id: 14}
       ]
 
       it("should return a list of all zipcodes ordered by name", function (done) {
-        var context = new MockContext()
-        context.then(
-          function (context) {
-
-            expect(context.error).toBe(null);
-            expect(context.response).toEqual(matchingRegions);
-
+        Region.atomize(input).then(
+          function(result){
+            expect(result).toEqual(matchingRegions);
             done();
+          },
+          function(error){
+            console.log(error);
           }
-        );
-
-        subject.handler(event, context);
+        )
       });
     })
 
     describe("with zipcodes mixed with higher Regions", function() {
 
-      var event = {
-        regions: "[ 1, 15, 16]"
-      }
+      var input = [ 1, 15, 16];
 
       var matchingRegions = [
-        {id: 10, name: null, type: null, area: null},
-        {id: 11, name: null, type: null, area: null},
-        {id: 12, name: null, type: null, area: null},
+        {id: 10},
+        {id: 11},
+        {id: 12},
 
-        {id: 15, name: null, type: null, area: null},
-        {id: 16, name: null, type: null, area: null},
+        {id: 15},
+        {id: 16}
       ]
 
       it("should return a list of all zipcodes ordered by name", function (done) {
-        var context = new MockContext()
-        context.then(
-          function (context) {
-
-            expect(context.error).toBe(null);
-            expect(context.response).toEqual(matchingRegions);
-
+        Region.atomize(input).then(
+          function(result){
+            expect(result).toEqual(matchingRegions);
             done();
           }
-        );
-
-        subject.handler(event, context);
+        )
       });
     })
   })

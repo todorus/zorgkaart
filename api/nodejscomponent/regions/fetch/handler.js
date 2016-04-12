@@ -53,14 +53,7 @@ module.exports.handler = function (event, context) {
     }
   ).then(
     function (result) {
-      var response = result.map(function (currentValue, index, original) {
-        return {
-          id: currentValue["id"],
-          name: currentValue["name"],
-          type: currentValue["type"],
-          area: currentValue["area"]
-        };
-      });
+      var response = Region.toJson(result);
       context.succeed(response);
     },
     function (error) {
