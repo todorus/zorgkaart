@@ -23,18 +23,20 @@ stream
           type: Region.TYPE_MUNICIPALITY
       }
 
-      Region.create({
+      var promise = Region.create({
         name: name,
         description: null,
         type: Region.TYPE_MUNICIPALITY,
         area: JSON.stringify(area)
-      }, function (err, result) {
-        if (err) {
-          return console.error(err);
+      }).then(
+        function(result){
+          console.log(result.data); // delivers an array of query results
+          console.log(result.columns); // delivers an array of names of objects getting returned
+        },
+        function(error){
+          console.error(err);
         }
-        console.log(result.data); // delivers an array of query results
-        console.log(result.columns); // delivers an array of names of objects getting returned
-      });
+      );
 
     };
   }));

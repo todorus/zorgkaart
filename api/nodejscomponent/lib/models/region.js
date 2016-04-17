@@ -1,4 +1,6 @@
 'use strict';
+var Q = require('q');
+
 module.exports = function(db, databaseName){
   function Region() {
     this._id = null;
@@ -23,9 +25,9 @@ module.exports = function(db, databaseName){
     return instance;
   }
 
-  Region.create = function(properties, callback){
+  Region.create = function(properties){
     var instance = Region.build(properties);
-    instance.save(callback)
+    return instance.save()
   };
 
   Region.prototype.setAll = function(properties){
@@ -38,14 +40,14 @@ module.exports = function(db, databaseName){
     this[propertyName] = value != undefined ? value : null;
   }
 
-  Region.prototype.save = function(callback){
+  Region.prototype.save = function(){
     //Run raw cypher with params
     var labels = ':Region:'+Region.databaseName;
     if(this.type != null){
       labels += ":" + this.type;
     }
 
-    console.log("Region.databasename", Region.databaseName);
+    var deferred = Q.defer();
 
     Region.db.cypherQuery(
       'CREATE (' +
@@ -57,8 +59,16 @@ module.exports = function(db, databaseName){
         description: this.description,
         type: this.type,
         area: this.area,
-      }, callback
+      }, function (error, result) {
+        if (error) {
+          deferred.reject(new Error(error));
+        } else {
+          deferred.resolve(result);
+        }
+      }
     );
+
+    return deferred.promise;
   }
 
   return Region;
