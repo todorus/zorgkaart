@@ -34,7 +34,7 @@ stream
           console.log(result.columns); // delivers an array of names of objects getting returned
         },
         function(error){
-          console.error(err);
+          console.error(error);
         }
       );
 
