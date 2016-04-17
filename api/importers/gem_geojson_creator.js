@@ -15,22 +15,25 @@ stream
     function (data) {
       {
         var _data = data;
-        console.log("data", _data);
         var name = _data["properties"]["gemeentena"];
-        var area = _data;
-        area["properties"] = {
-          name: name,
-          description: null,
-          type: Region.TYPE_MUNICIPALITY
-        }
+        var code = _data["properties"]["code"];
 
         Region.findOrCreate({
           name: name,
-          type: Region.TYPE_MUNICIPALITY
+          type: Region.TYPE_MUNICIPALITY,
+          code: code
         }).then(
           function (result) {
             var region = result[0];
             region.set("description", null);
+
+            var area = _data;
+            area["properties"] = {
+              id: region.properties["_id"],
+              name: name,
+              description: null,
+              type: Region.TYPE_MUNICIPALITY
+            };
             region.set("area", JSON.stringify(area));
 
             return region.save();

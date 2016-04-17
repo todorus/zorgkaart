@@ -15,23 +15,37 @@ stream
     {
       var _data = data;
       var name = _data["properties"]["PC4"].toString();
+      var code = _data["properties"]["PC4"];
 
-      Region.findOrCreate({where: {type: Region.TYPE_ZIP, name: name}})
-        .spread(function(result, created) {
-            if(result == null){
-              console.error("result == null for name:",name);
-              return;
-            }
+      Region.findOrCreate({
+        name: name,
+        type: Region.TYPE_ZIP,
+        code: code
+      }).then(
+        function (result) {
+          var region = result[0];
+          region.set("description", null);
 
-            _data["properties"] = {
-              name: name,
-              description: null,
-              type: Region.TYPE_ZIP
-            }
-            result.area = _data;
-            result.save();
+          var area = _data;
+          area["properties"] = {
+            id: region.properties["_id"],
+            name: name,
+            description: null,
+            type: Region.TYPE_ZIP
+          };
+          region.set("area", JSON.stringify(area));
 
-          }
-        )
+          return region.save();
+        }
+      ).then(
+        function (result) {
+          console.log("result", result);
+        }
+      ).catch(
+        function (error) {
+          console.error(error);
+        }
+      );
+
     };
   }));

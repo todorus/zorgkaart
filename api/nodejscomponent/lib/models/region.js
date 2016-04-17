@@ -4,7 +4,7 @@ var Q = require('q');
 module.exports = function (db, databaseName) {
   function Region() {
     this.data = {};
-    this.properties = ["name", "description", "type", "area"];
+    this.properties = ["name", "description", "type", "code", "area"];
 
     Region.db = db;
     Region.databaseName = databaseName;
