@@ -11,32 +11,40 @@ var jsonData = 'gemeentes.geo.json',
 
 stream
   .pipe(parser)
-  .pipe(es.mapSync(function (data) {
-    {
-      var _data = data;
-      console.log("data", _data);
-      var name = _data["properties"]["gemeentena"];
-      var area = _data;
-      area["properties"] = {
+  .pipe(es.mapSync(
+    function (data) {
+      {
+        var _data = data;
+        console.log("data", _data);
+        var name = _data["properties"]["gemeentena"];
+        var area = _data;
+        area["properties"] = {
           name: name,
           description: null,
           type: Region.TYPE_MUNICIPALITY
-      }
-
-      var promise = Region.create({
-        name: name,
-        description: null,
-        type: Region.TYPE_MUNICIPALITY,
-        area: JSON.stringify(area)
-      }).then(
-        function(result){
-          console.log(result.data); // delivers an array of query results
-          console.log(result.columns); // delivers an array of names of objects getting returned
-        },
-        function(error){
-          console.error(error);
         }
-      );
 
-    };
-  }));
+        Region.findOrCreate({
+          name: name,
+          type: Region.TYPE_MUNICIPALITY
+        }).then(
+          function (result) {
+            var region = result[0];
+            region.set("description", null);
+            region.set("area", JSON.stringify(area));
+
+            return region.save();
+          }
+        ).then(
+          function (result) {
+            console.log("result", result);
+          }
+        ).catch(
+          function (error) {
+            console.error(error);
+          }
+        );
+
+      }
+    })
+  );

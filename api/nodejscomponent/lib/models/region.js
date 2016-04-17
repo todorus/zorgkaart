@@ -3,7 +3,6 @@ var Q = require('q');
 
 module.exports = function (db, databaseName) {
   function Region() {
-    this._id = null;
     this.data = {};
     this.properties = ["name", "description", "type", "area"];
 
@@ -29,11 +28,27 @@ module.exports = function (db, databaseName) {
   };
 
   Region.findOrCreate = function (properties) {
+    var deferred = Q.defer();
+
     var region = Region.build(properties);
     var labels = buildLabels(region);
 
-    // "MERGE (n:"+labels+" { name:'Michael Douglas' })
-    // RETURN michael.name, michael.bornIn
+    Region.db.cypherQuery(
+      "MERGE (" +
+      "n" + labels +
+      buildPropertyQuery(properties) +
+      ") RETURN n",
+      properties,
+      function (error, result) {
+        if (error) {
+          deferred.reject(new Error(error));
+        } else {
+          deferred.resolve(resultToRegions(result));
+        }
+      }
+    );
+
+    return deferred.promise;
   }
 
   Region.prototype.setAll = function (properties) {
@@ -58,7 +73,8 @@ module.exports = function (db, databaseName) {
       props[key] = this.data[key] != undefined ? this.data[key] : null;
     }
 
-    if (this._id == null) {
+    var id = this.data["_id"];
+    if (id == null) {
 
       Region.db.cypherQuery(
         'CREATE (' +
@@ -70,13 +86,13 @@ module.exports = function (db, databaseName) {
           if (error) {
             deferred.reject(new Error(error));
           } else {
-            deferred.resolve(result);
+            deferred.resolve(resultToRegions(result));
           }
         }
       );
     } else {
       Region.db.cypherQuery(
-        'MATCH (n) WHERE id(n)= ' + this._id + ' ' +
+        'MATCH (n) WHERE id(n)= ' + id + ' ' +
         'SET n = { props }' +
         'RETURN n',
         {
@@ -93,6 +109,14 @@ module.exports = function (db, databaseName) {
     return deferred.promise;
   }
 
+  Region.prototype.toString = function () {
+    return "Region: " + JSON.stringify(this.data);
+  }
+
+  Region.prototype.inspect = function () {
+    return this.toString();
+  }
+
   function buildLabels(region) {
     var labels = ':Region:' + Region.databaseName;
     if (region.type != null) {
@@ -103,17 +127,25 @@ module.exports = function (db, databaseName) {
 
   function buildPropertyQuery(data) {
     var preFix = "{ ";
-    var postFix =  " }";
+    var postFix = " }";
 
     var query = "";
     for (var key in data) {
-      if(query.length > 0){
+      if (query.length > 0) {
         query += ", ";
       }
       query += key + ": " + "{" + key + "}";
     }
 
     return preFix + query + postFix;
+  }
+
+  function resultToRegions(result) {
+    var converted = [];
+    for (var i = 0; i < result.data.length; i++) {
+      converted.push(Region.build(result.data[i]));
+    }
+    return converted;
   }
 
   return Region;
