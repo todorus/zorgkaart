@@ -1,68 +1,65 @@
 'use strict';
-var sequelize = require("sequelize");
-module.exports = function (sequelize, DataTypes) {
+module.exports = function(db, databaseName){
+  function Region() {
+    this._id = null;
+    this.name = null;
+    this.description = null;
+    this.type = null;
+    this.area = null;
 
-  var Region = sequelize.define(
-    'Region',
-    {
-      name: DataTypes.STRING,
-      type: {
-        type: DataTypes.INTEGER,
-        unique: "compIndex"
-      },
-      code: {
-        type: DataTypes.INTEGER,
-        unique: "compIndex"
-      },
-      description: DataTypes.TEXT,
-      area: DataTypes.JSON,
-      zips: DataTypes.JSON
-    },
-    {
-      classMethods: {
-        atomize: function (input) {
-          var ids = input.join();
-          var type = Region.TYPE_ZIP;
-          var query = "SELECT id FROM \"Regions\"" +
-            " WHERE (type = " + type + " AND id in (" + ids +"))" +
-            " OR (type = " + type + " AND id IN (SELECT \"ChildId\" FROM \"RegionToRegions\" WHERE \"ParentId\" IN (" + ids +")))" +
-            " ORDER BY id";
+    Region.db = db;
+    Region.databaseName = databaseName;
 
-          return sequelize.query(
-            query,
-            { type: sequelize.QueryTypes.SELECT}
-          );
-        },
+    Region.TYPE_ZIP = "Zip";
+    Region.TYPE_PLACE = "Place";
+    Region.TYPE_MUNICIPALITY = "Municipality";
+    Region.TYPE_PROVINCE = "Province";
 
-        toJson: function(regions){
-          return regions.map(function (currentValue, index, original) {
+  };
 
-            return {
-              id: currentValue["id"] != undefined ? currentValue["id"] : null,
-              name: currentValue["name"] != undefined ? currentValue["name"] : null,
-              type: currentValue["type"] != undefined ? currentValue["type"] : null,
-              area: currentValue["area"] != undefined ? currentValue["area"] : null
-            };
-          });
-        }
-      }
+  Region.build = function(properties){
+    var instance = new Region();
+    instance.setAll(properties);
+    return instance;
+  }
+
+  Region.create = function(properties, callback){
+    var instance = Region.build(properties);
+    instance.save(callback)
+  };
+
+  Region.prototype.setAll = function(properties){
+    for (var key in properties) {
+      this.set(key, properties[key]);
     }
-  );
+  }
 
-  Region.belongsToMany(
-    Region,
-    {
-      as: 'Parents',
-      foreignKey: 'ChildId',
-      through: 'RegionToRegions'
+  Region.prototype.set = function (propertyName, value) {
+    this[propertyName] = value != undefined ? value : null;
+  }
+
+  Region.prototype.save = function(callback){
+    //Run raw cypher with params
+    var labels = ':Region:'+Region.databaseName;
+    if(this.type != null){
+      labels += ":" + this.type;
     }
-  );
 
-  Region.TYPE_ZIP = 1;
-  Region.TYPE_PLACE = 100;
-  Region.TYPE_MUNICIPALITY = 200;
-  Region.TYPE_PROVINCE = 300;
+    console.log("Region.databasename", Region.databaseName);
 
+    Region.db.cypherQuery(
+      'CREATE (' +
+        'n'+ labels +
+        ' { name: {name}, description: {description}, type: {type}, area: {area} }' +
+      ') RETURN n',
+      {
+        name: this.name,
+        description: this.description,
+        type: this.type,
+        area: this.area,
+      }, callback
+    );
+  }
 
   return Region;
-};
+}

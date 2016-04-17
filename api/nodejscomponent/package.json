@@ -14,7 +14,6 @@
   "dependencies": {
     "pg": "^4.5.3",
     "pg-hstore": "^2.3.2",
-    "sequelize": "^3.19.2",
     "serverless-helpers-js": "~0.0.3",
     "turf": "^2.0.2"
   }

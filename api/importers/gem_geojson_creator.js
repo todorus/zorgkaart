@@ -15,24 +15,26 @@ stream
     {
       var _data = data;
       console.log("data", _data);
-      var name = _data["properties"]["gemeentena"]
+      var name = _data["properties"]["gemeentena"];
+      var area = _data;
+      area["properties"] = {
+          name: name,
+          description: null,
+          type: Region.TYPE_MUNICIPALITY
+      }
 
-      Region.findOrCreate({where: {type: Region.TYPE_MUNICIPALITY, name: name}})
-        .spread(function(result, created) {
-            if(result == null){
-              console.error("result == null for name:",name);
-              return;
-            }
+      Region.create({
+        name: name,
+        description: null,
+        type: Region.TYPE_MUNICIPALITY,
+        area: JSON.stringify(area)
+      }, function (err, result) {
+        if (err) {
+          return console.error(err);
+        }
+        console.log(result.data); // delivers an array of query results
+        console.log(result.columns); // delivers an array of names of objects getting returned
+      });
 
-            _data["properties"] = {
-              name: name,
-              description: null,
-              type: Region.TYPE_MUNICIPALITY
-            }
-            result.area = _data;
-            result.save();
-
-          }
-        )
     };
   }));
