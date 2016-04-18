@@ -39,7 +39,7 @@ stream
         }
       ).then(
         function (result) {
-          console.log("result", result.length);
+          console.log("result", result);
         }
       ).catch(
         function (error) {
