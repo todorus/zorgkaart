@@ -15,7 +15,7 @@ stream
     {
       var _data = data;
       var name = _data["properties"]["PC4"].toString();
-      var code = _data["properties"]["PC4"];
+      var code = name;
 
       Region.findOrCreate({
         name: name,
@@ -39,7 +39,7 @@ stream
         }
       ).then(
         function (result) {
-          console.log("result", result);
+          console.log("result", result.length);
         }
       ).catch(
         function (error) {

@@ -1,7 +1,7 @@
 'use strict';
 
-var env       = process.env.NODE_ENV || 'local';
-var config    = require(__dirname + '/../config/db.json')[env];
+var env = process.env.NODE_ENV || 'local';
+var config = require(__dirname + '/../config/db.json')[env];
 
 //Create a db object. We will using this object to work on the DB.
 var url = config["protocol"] + "://" + config["username"] + ":" + config["password"] + "@" + config["host"] + ":" + config["port"];
@@ -10,4 +10,9 @@ var db = new neo4j(url);
 var databaseName = config["database"];
 
 module.exports = db;
-module.exports.Region = require('./Region.js')(db, databaseName);
+
+//nodes
+module.exports.Region = require(__dirname + '/nodes/region.js')(db, databaseName);
+
+//relations
+module.exports.CONTAINS = require(__dirname + '/relations/CONTAINS.js')(db, databaseName);

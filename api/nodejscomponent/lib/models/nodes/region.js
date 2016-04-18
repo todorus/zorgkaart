@@ -5,16 +5,15 @@ module.exports = function (db, databaseName) {
   function Region() {
     this.data = {};
     this.properties = ["name", "description", "type", "code", "area"];
-
-    Region.db = db;
-    Region.databaseName = databaseName;
-
-    Region.TYPE_ZIP = "Zip";
-    Region.TYPE_PLACE = "Place";
-    Region.TYPE_MUNICIPALITY = "Municipality";
-    Region.TYPE_PROVINCE = "Province";
-
   };
+
+  Region.db = db;
+  Region.databaseName = databaseName;
+
+  Region.TYPE_ZIP = "Zip";
+  Region.TYPE_PLACE = "Place";
+  Region.TYPE_MUNICIPALITY = "Municipality";
+  Region.TYPE_PROVINCE = "Province";
 
   Region.build = function (properties) {
     var instance = new Region();

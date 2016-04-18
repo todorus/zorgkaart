@@ -16,7 +16,7 @@ stream
       {
         var _data = data;
         var name = _data["properties"]["gemeentena"];
-        var code = _data["properties"]["code"];
+        var code = _data["properties"]["code"].toString();
 
         Region.findOrCreate({
           name: name,

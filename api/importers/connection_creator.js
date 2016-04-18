@@ -4,6 +4,7 @@ var fs = require('fs'),
   db = require(__dirname + '/../nodejscomponent/lib/models');
 
 var Region = db["Region"];
+var CONTAINS = db["CONTAINS"];
 
 var connectionData = 'postcode-gemeente-tabel.json',
   connectStream = fs.createReadStream(connectionData, {encoding: 'utf8'}),
@@ -14,32 +15,31 @@ connectStream
   .pipe(es.mapSync(function (data) {
     {
       var _data = data;
-      var zipCode = _data['Postcode'];
       var municipalityCode = _data["Gemeentecode"];
-      var zip;
-      var municipality;
+      var zipCode = _data['Postcode'];
 
-      Region.find({where: {code: municipalityCode, type: Region.TYPE_MUNICIPALITY}})
-        .then(function(result) {
-            if(result == null){
-              console.error("result == null for code:",municipalityCode);
-              return;
-            }
+      var props = {
+        parent: {
+          type: Region.TYPE_MUNICIPALITY,
+          code: municipalityCode
+        },
+        child: {
+          type: Region.TYPE_ZIP,
+          code: zipCode
+        }
+      };
 
-            municipality = result;
-
-            Region.find({where: {code: zipCode, type: Region.TYPE_ZIP}})
-              .then(function(result){
-                if(result == null){
-                  console.error("result == null for code:",zipCode);
-                  return;
-                }
-
-                zip = result;
-                zip.addParent(municipality);
-              })
-
+      var contains = CONTAINS.build(props);
+      contains.save()
+        .then(
+          function (result) {
+            console.log("result", result.length > 0);
           }
-        )
-    };
+        ).catch(
+          function (error) {
+            console.error(error);
+          }
+        );
+
+    }
   }));
