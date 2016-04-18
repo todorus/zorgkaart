@@ -1,4 +1,5 @@
 'use strict';
+var Q = require('q');
 
 var env = process.env.NODE_ENV || 'local';
 var config = require(__dirname + '/../config/db.json')[env];
@@ -16,3 +17,6 @@ module.exports.Region = require(__dirname + '/nodes/region.js')(db, databaseName
 
 //relations
 module.exports.CONTAINS = require(__dirname + '/relations/CONTAINS.js')(db, databaseName);
+
+//utility
+module.exports.Utils = require(__dirname + '/utils.js')(db, databaseName);

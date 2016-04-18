@@ -50,6 +50,46 @@ module.exports = function (db, databaseName) {
     return deferred.promise;
   }
 
+  Region.bulkCreate = function(propertiesArray){
+    var deferred = Q.defer();
+    var statements = []
+    for (var i = 0; i < propertiesArray.length; i++){
+      var props = propertiesArray[i];
+      if(props["area"] != null){
+        props["area"] = JSON.stringify(props["area"]);
+      }
+
+      var labels = buildLabels(Region.build(props));
+      var statement = 'CREATE (' +
+        'n' + labels +
+        buildPropertyQuery(props) +
+        ') RETURN n';
+
+      statements.push(
+        {
+          statement: statement,
+          parameters: {
+            props: props
+          }
+        }
+      )
+    }
+
+    console.log("statements", statements);
+
+    db.beginAndCommitTransaction({
+      statements: statements
+    }, function(err, result){
+      if(err){
+        deferred.reject(err);
+      } else {
+        deferred.resolve(result);
+      }
+    });
+
+    return deferred.promise;
+  }
+
   Region.prototype.setAll = function (properties) {
     for (var key in properties) {
       this.set(key, properties[key]);

@@ -3,13 +3,15 @@ require('../../spec_helper.js');
 var subject = require("../../../nodejscomponent/regions/fetch/handler.js");
 var db = require("../../../nodejscomponent/lib/models");
 var Region = db["Region"];
+var Utils = db["Utils"];
 
 describe("/regions", function () {
 
   before(
     function (done) {
       // Wipe db
-      db.sequelize.sync({force: true}).then(
+      Utils.wipe()
+        .then(
         function () {
           // Seed db
           return db["Region"].bulkCreate(
@@ -32,8 +34,10 @@ describe("/regions", function () {
       ).then(
         function (result) {
           done();
-        },
+        }
+      ).catch(
         function (error) {
+          console.log(error);
           throw error;
         }
       )
