@@ -35,7 +35,7 @@ module.exports = function (db, databaseName) {
     Region.db.cypherQuery(
       "MERGE (" +
       "n" + labels +
-      buildPropertyQuery(properties) +
+      buildPropertyClause(properties) +
       ") RETURN n",
       properties,
       function (error, result) {
@@ -64,8 +64,6 @@ module.exports = function (db, databaseName) {
 
     var deferred = Q.defer();
 
-    var labels = buildLabels(this);
-
     var props = {};
     for (var i = 0; i < this.properties.length; i++) {
       var key = this.properties[i];
@@ -75,28 +73,21 @@ module.exports = function (db, databaseName) {
     var id = this.data["_id"];
     if (id == null) {
 
-      Region.db.cypherQuery(
-        'CREATE (' +
-        'n' + labels +
-        buildPropertyQuery(props) +
-        ') RETURN n',
+      Region.db.insertNode(
         props,
+        ["Region", Region.databaseName],
         function (error, result) {
           if (error) {
             deferred.reject(new Error(error));
           } else {
-            deferred.resolve(resultToRegions(result));
+            deferred.resolve(result);
           }
-        }
-      );
+        });
     } else {
-      Region.db.cypherQuery(
-        'MATCH (n) WHERE id(n)= ' + id + ' ' +
-        'SET n = { props }' +
-        'RETURN n',
-        {
-          props: props
-        }, function (error, result) {
+      Region.db.updateNode(
+        id,
+        props,
+        function (error, result) {
           if (error) {
             deferred.reject(new Error(error));
           } else {
@@ -124,7 +115,7 @@ module.exports = function (db, databaseName) {
     return labels;
   }
 
-  function buildPropertyQuery(data) {
+  function buildPropertyClause(data) {
     var preFix = "{ ";
     var postFix = " }";
 
