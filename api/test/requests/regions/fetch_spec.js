@@ -9,11 +9,8 @@ describe("/regions", function () {
 
   before(
     function (done) {
-      // Wipe db
-      Utils.wipe()
-        .then(
-        function () {
-          // Seed db
+      Utils.wipe().then(
+        function(result){
           return db["Region"].bulkCreate(
             [
               {id: 1, name: 'Maastricht', type: Region.TYPE_PLACE, area: {properties: {name: 'Maastricht'}, geometry: [[1,1]]}},
@@ -24,12 +21,9 @@ describe("/regions", function () {
               {id: 6, name: 'Maasland', type: Region.TYPE_MUNICIPALITY, area: {properties: {name: 'Maasland'}, geometry: [[6,1]]}},
               {id: 7, name: 'Overblaak', type: Region.TYPE_PLACE, area: {properties: {name: 'Overblaak'}, geometry: [[7,1]]}},
               {id: 8, name: 'Ossdam', type: Region.TYPE_PLACE, area: {properties: {name: 'Ossdam'}, geometry: [[8,1]]}},
-              {id: 9, name: 'Oss', type: Region.TYPE_PLACE, area: {properties: {name: 'Oss'}, geometry: [[9,1]]}},
-              {id: 10, name: 'Ossdont', type: Region.TYPE_ZIP, area: null},
-              {id: 11, name: 'Maasdont', type: Region.TYPE_ZIP, area: null},
-              {id: 12, name: 'ZZZdo', type: Region.TYPE_PLACE, area: null},
+              {id: 9, name: 'Oss', type: Region.TYPE_PLACE, area: {properties: {name: 'Oss'}, geometry: [[9,1]]}}
             ]
-          )
+          );
         }
       ).then(
         function (result) {
@@ -37,8 +31,7 @@ describe("/regions", function () {
         }
       ).catch(
         function (error) {
-          console.log(error);
-          throw error;
+          done(error);
         }
       )
     }
@@ -59,18 +52,20 @@ describe("/regions", function () {
       {id: 9, name: 'Oss', type: Region.TYPE_PLACE, area: {properties: {name: 'Oss'}, geometry: [[9,1]]}},
       {id: 8, name: 'Ossdam', type: Region.TYPE_PLACE, area: {properties: {name: 'Ossdam'}, geometry: [[8,1]]}},
       {id: 7, name: 'Overblaak', type: Region.TYPE_PLACE, area: {properties: {name: 'Overblaak'}, geometry: [[7,1]]}},
-      {id: 12, name: 'ZZZdo', type: Region.TYPE_PLACE, area: null},
     ]
 
-    it("should return a list of all Regions ordered by name and filters those without an area", function (done) {
+    it("should return a list of all Regions ordered by name", function (done) {
       var context = new MockContext()
       context.then(
         function (context) {
-
-          expect(context.error).toBe(null);
           expect(context.response).toEqual(matchingRegions);
 
           done();
+        }
+      ).fail(
+        function(error){
+          console.log(error);
+          throw new Error(error);
         }
       );
 
@@ -97,10 +92,16 @@ describe("/regions", function () {
         context.then(
           function (context) {
 
+            console.log("dub", context.response);
+
             expect(context.error).toBe(null);
             expect(context.response).toEqual(matchingRegions);
 
             done();
+          }
+        ).fail(
+          function(error){
+            done(error);
           }
         );
 
@@ -127,6 +128,10 @@ describe("/regions", function () {
 
             done();
           }
+        ).fail(
+          function(error){
+            done(error);
+          }
         );
 
         subject.handler(event, context);
@@ -151,6 +156,10 @@ describe("/regions", function () {
             expect(context.response).toEqual(matchingRegions);
 
             done();
+          }
+        ).fail(
+          function(error){
+            done(error);
           }
         );
 
@@ -184,6 +193,10 @@ describe("/regions", function () {
 
             done();
           }
+        ).fail(
+          function(error){
+            done(error);
+          }
         );
 
         subject.handler(event, context);
@@ -214,6 +227,10 @@ describe("/regions", function () {
 
             done();
           }
+        ).fail(
+          function(error){
+            done(error);
+          }
         );
 
         subject.handler(event, context);
@@ -243,6 +260,10 @@ describe("/regions", function () {
           expect(context.response).toEqual(matchingRegions);
 
           done();
+        }
+      ).fail(
+        function(error){
+          done(error);
         }
       );
 

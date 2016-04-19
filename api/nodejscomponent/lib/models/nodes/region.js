@@ -50,44 +50,71 @@ module.exports = function (db, databaseName) {
     return deferred.promise;
   }
 
-  Region.bulkCreate = function(propertiesArray){
+  Region.bulkCreate = function (propertiesArray) {
     var deferred = Q.defer();
     var statements = []
-    for (var i = 0; i < propertiesArray.length; i++){
+    for (var i = 0; i < propertiesArray.length; i++) {
       var props = propertiesArray[i];
-      if(props["area"] != null){
+      if (props["area"] != null) {
         props["area"] = JSON.stringify(props["area"]);
       }
 
       var labels = buildLabels(Region.build(props));
-      var statement = 'CREATE (' +
+      var query = 'CREATE (' +
         'n' + labels +
         buildPropertyQuery(props) +
         ') RETURN n';
 
-      statements.push(
-        {
-          statement: statement,
-          parameters: {
-            props: props
-          }
-        }
-      )
+      var statement = {
+        statement: query,
+        parameters: props
+      }
+      statements.push(statement)
     }
-
-    console.log("statements", statements);
 
     db.beginAndCommitTransaction({
       statements: statements
-    }, function(err, result){
-      if(err){
+    }, function (err, result) {
+      if (err) {
         deferred.reject(err);
+      } else if (result["errors"].length > 0) {
+        deferred.reject(result["errors"]);
       } else {
         deferred.resolve(result);
       }
     });
 
     return deferred.promise;
+  };
+
+  Region.search = function (name) {
+    var deferred = Q.defer();
+
+    var query = "MATCH (n" + buildLabels(null) + ") " +
+      "WHERE n.name =~ '(?i)" + name + ".*' " +
+      "RETURN n";
+    db.cypherQuery(
+      query,
+      function (error, result) {
+        if (error) {
+          deferred.reject(new Error(error));
+        } else {
+          deferred.resolve(result);
+        }
+      });
+
+    return deferred.promise;
+  };
+
+  Region.toJson = function (result) {
+    var response = [];
+    var regions = resultToRegions(result);
+    for(var i=0 ; i < regions.length; i++){
+      var region = regions[i];
+      response.push(region.data);
+    }
+
+    return response;
   }
 
   Region.prototype.setAll = function (properties) {
@@ -158,8 +185,8 @@ module.exports = function (db, databaseName) {
 
   function buildLabels(region) {
     var labels = ':Region:' + Region.databaseName;
-    if (region.type != null) {
-      labels += ":" + region.type;
+    if (region != null && region.data["type"] != null) {
+      labels += ":" + region.data["type"];
     }
     return labels;
   }

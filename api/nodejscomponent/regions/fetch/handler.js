@@ -17,22 +17,7 @@ var Region = db["Region"];
 // Lambda Handler
 module.exports.handler = function (event, context) {
 
-  var where = {
-    $or: {
-      area: {
-        $not: null
-      },
-      type: {
-        $not: Region.TYPE_ZIP
-      }
-    }
-  };
-  if (event.query != undefined && event.query != null) {
-    where["name"] = {
-      $iLike: event.query + '%'
-    }
-  }
-
+  var query = event.query;
   var offset = 0;
   var limit = 10;
   if (event.limit != undefined && event.limit != null) {
@@ -43,14 +28,10 @@ module.exports.handler = function (event, context) {
     }
   }
 
-  Region.findAll(
-    {
-      where: where,
-      limit: limit,
-      offset: offset,
-      order: 'lower("Region"."name") ASC'
 
-    }
+
+  Region.search(
+    query
   ).then(
     function (result) {
       var response = Region.toJson(result);

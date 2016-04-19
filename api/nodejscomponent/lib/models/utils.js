@@ -11,8 +11,7 @@ module.exports = function (db, databaseName) {
 
   Utils.wipe = function(){
     var deferred = Q.defer();
-
-    var query = "MATCH (n:"+databaseName+")-[r]->(m) DELETE n,m,r";
+    var query = "MATCH (n:"+databaseName+") OPTIONAL MATCH (n:"+databaseName+")-[r]->(m) DELETE n,m,r";
 
     db.cypherQuery(
       query,
@@ -27,6 +26,21 @@ module.exports = function (db, databaseName) {
     );
 
     return deferred.promise;
+  };
+
+  Utils.createIndexes = function() {
+    // insert an index with a custom configuration
+    db.insertNodeIndex({
+      index: 'the_index_name',
+      config: {
+        type: 'fulltext',
+        provider: 'lucene'
+      }
+    }, function(err, result){
+      if (err) throw err;
+
+      console.log(result); // return the index template with its custom configuration
+    });
   }
 
   return Utils;

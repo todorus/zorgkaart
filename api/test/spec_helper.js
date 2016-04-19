@@ -1,12 +1,17 @@
 global.expect = require('expect');
 global.sinon = require('sinon');
 
+var Q = require("q");
+
 // disable logging
 //console.log = function() {}
 
 function MockContext(callback) {
     this.successfull = false;
     this.finished = false;
+
+    this.deferred = Q.defer();
+    this.promise = this.deferred.promise;
 
     this.error = null;
     this.response = null;
@@ -19,8 +24,10 @@ MockContext.prototype.done = function (error, response) {
     this.error = error;
     this.response = response;
 
-    if(this.callback != undefined && this.callback != null){
-        this.callback(this);
+    if(error){
+        this.deferred.reject(error);
+    } else {
+        this.deferred.fulfill(this);
     }
 }
 MockContext.prototype.fail = function (error) {
@@ -29,9 +36,10 @@ MockContext.prototype.fail = function (error) {
 MockContext.prototype.succeed = function (response) {
     this.done(null, response);
 }
-MockContext.prototype.then = function(callback){
-    this.callback = callback;
+MockContext.prototype.then = function(resolveCallback, errorCallback){
+    return this.promise.then(resolveCallback, errorCallback);
 }
+
 global.MockContext = MockContext;
 
 it("should run in the test environment", function(){
