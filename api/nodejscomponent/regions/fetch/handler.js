@@ -31,7 +31,7 @@ module.exports.handler = function (event, context) {
 
 
   Region.search(
-    query
+    query, limit, offset
   ).then(
     function (result) {
       var response = Region.toJson(result);

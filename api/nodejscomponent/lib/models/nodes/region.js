@@ -87,12 +87,19 @@ module.exports = function (db, databaseName) {
     return deferred.promise;
   };
 
-  Region.search = function (name) {
+  Region.search = function (name, limit, skip) {
     var deferred = Q.defer();
 
+    var whereClause = name != null &&  name != undefined ? "WHERE n.name =~ '(?i)" + name + ".*' " : "";
+
     var query = "MATCH (n" + buildLabels(null) + ") " +
-      "WHERE n.name =~ '(?i)" + name + ".*' " +
-      "RETURN n";
+      whereClause +
+      "RETURN n " +
+      "ORDER BY LOWER(n.name), length(n.name) ASC " +
+      "SKIP " + skip + " " +
+      "LIMIT " + limit;
+
+    // console.log("query",query);
     db.cypherQuery(
       query,
       function (error, result) {
@@ -108,10 +115,13 @@ module.exports = function (db, databaseName) {
 
   Region.toJson = function (result) {
     var response = [];
-    var regions = resultToRegions(result);
-    for(var i=0 ; i < regions.length; i++){
-      var region = regions[i];
-      response.push(region.data);
+    for (var i = 0; i < result.data.length; i++) {
+      var data = result.data[i];
+
+      if (data["area"]) {
+        data["area"] = JSON.parse(data["area"]);
+      }
+      response.push(data);
     }
 
     return response;
