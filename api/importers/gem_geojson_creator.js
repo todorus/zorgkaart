@@ -1,53 +1,70 @@
 var fs = require('fs'),
-  JSONStream = require('JSONStream'),
-  es = require('event-stream'),
   db = require(__dirname + '/../nodejscomponent/lib/models');
 
 var Region = db["Region"];
+var CONTAINS = db["CONTAINS"];
 
-var jsonData = 'gemeentes.geo.json',
-  stream = fs.createReadStream(jsonData, {encoding: 'utf8'}),
-  parser = JSONStream.parse('*');
+var jsonData = 'gemeentes.geo.json';
+var json = JSON.parse(fs.readFileSync(jsonData, 'utf8'));
+var index = -1;
 
-stream
-  .pipe(parser)
-  .pipe(es.mapSync(
-    function (data) {
-      {
-        var _data = data;
-        var name = _data["properties"]["gemeentena"];
-        var code = _data["properties"]["code"].toString();
+increment();
 
-        Region.findOrCreate({
-          name: name,
-          type: Region.TYPE_MUNICIPALITY,
-          code: code
-        }).then(
-          function (result) {
-            var region = result[0];
-            region.set("description", null);
 
-            var area = _data;
-            area["properties"] = {
-              id: region.properties["_id"],
-              name: name,
-              description: null,
-              type: Region.TYPE_MUNICIPALITY
-            };
-            region.set("area", JSON.stringify(area));
+function increment(){
+  index++;
+  if(index >= json.length){
+    return;
+  }
 
-            return region.save();
-          }
-        ).then(
-          function (result) {
-            console.log("result", result);
-          }
-        ).catch(
-          function (error) {
-            console.error(error);
-          }
-        );
-
+  process(index)
+    .then(
+      function (result) {
+        increment();
       }
-    })
+    ).catch(
+    function (error) {
+      console.error(error);
+      increment();
+    }
+  )
+}
+
+function process(i) {
+  var data = json[i];
+  var name = data["properties"]["gemeentena"];
+  var code = data["properties"]["code"].toString();
+
+  return Region.findOrCreate({
+    name: name,
+    type: Region.TYPE_MUNICIPALITY,
+    code: code
+  }).then(
+    function (result) {
+      var region = result[0];
+      region.set("description", null);
+
+      var area = data;
+      area["properties"] = {
+        id: region.properties["_id"],
+        name: name,
+        description: null,
+        type: Region.TYPE_MUNICIPALITY
+      };
+      region.set("area", JSON.stringify(area));
+
+      return region.save();
+    }
+  ).then(
+    function (result) {
+      console.log("result", result);
+    }
+  ).catch(
+    function (error) {
+      console.error(error);
+    }
   );
+
+}
+
+
