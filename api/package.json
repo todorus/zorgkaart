@@ -13,9 +13,8 @@
     "test": "NODE_ENV=test ./node_modules/.bin/mocha --reporter spec --recursive"
   },
   "dependencies": {
-    "pg": "^4.5.3",
-    "pg-hstore": "^2.3.2",
-    "sequelize": "^3.19.2",
+    "node-neo4j": "^2.0.3",
+    "q": "^1.4.1",
     "serverless": "^0.5.3",
     "serverless-lambda-prune-plugin": "^1.1.0",
     "turf": "^2.0.2"
@@ -23,6 +22,7 @@
   "devDependencies": {
     "expect": "^1.14.0",
     "mocha": "^2.4.5",
+    "neo4ji": "0.0.10",
     "sequelize-cli": "^2.3.1",
     "sinon": "^1.17.3"
   }

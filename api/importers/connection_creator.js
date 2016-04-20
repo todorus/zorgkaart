@@ -1,45 +1,53 @@
 var fs = require('fs'),
-  JSONStream = require('JSONStream'),
-  es = require('event-stream'),
   db = require(__dirname + '/../nodejscomponent/lib/models');
 
 var Region = db["Region"];
+var CONTAINS = db["CONTAINS"];
 
-var connectionData = 'postcode-gemeente-tabel.json',
-  connectStream = fs.createReadStream(connectionData, {encoding: 'utf8'}),
-  parser = JSONStream.parse('*');
+var connectionData = 'postcode-gemeente-tabel.json'
+var json = JSON.parse(fs.readFileSync(connectionData, 'utf8'));
+var index = -1;
 
-connectStream
-  .pipe(parser)
-  .pipe(es.mapSync(function (data) {
-    {
-      var _data = data;
-      var zipCode = _data['Postcode'];
-      var municipalityCode = _data["Gemeentecode"];
-      var zip;
-      var municipality;
+increment();
 
-      Region.find({where: {code: municipalityCode, type: Region.TYPE_MUNICIPALITY}})
-        .then(function(result) {
-            if(result == null){
-              console.error("result == null for code:",municipalityCode);
-              return;
-            }
 
-            municipality = result;
+function increment(){
+  index++;
+  if(index >= json.length){
+    return;
+  }
 
-            Region.find({where: {code: zipCode, type: Region.TYPE_ZIP}})
-              .then(function(result){
-                if(result == null){
-                  console.error("result == null for code:",zipCode);
-                  return;
-                }
+  process(index)
+    .then(
+      function (result) {
+        console.log("result", result.length > 0);
+        increment();
+      }
+    ).catch(
+    function (error) {
+      console.error(error);
+      increment();
+    }
+  )
+}
 
-                zip = result;
-                zip.addParent(municipality);
-              })
+function process(i) {
+  var data = json[i];
+  var municipalityCode = data["Gemeentecode"];
+  var zipCode = data['Postcode'];
 
-          }
-        )
-    };
-  }));
+  var props = {
+    parent: {
+      type: Region.TYPE_MUNICIPALITY,
+      code: municipalityCode
+    },
+    child: {
+      type: Region.TYPE_ZIP,
+      code: zipCode
+    }
+  };
+
+  var contains = CONTAINS.build(props);
+  return contains.save();
+
+}

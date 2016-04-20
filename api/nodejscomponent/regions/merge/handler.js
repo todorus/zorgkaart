@@ -18,77 +18,47 @@ var Region = db["Region"];
 // Lambda Handler
 module.exports.handler = function (event, context) {
 
-  var type = Region.TYPE_ZIP;
   // Serverless does not support parsed query parameters, but rather a string. This is a workaround until this issue
   // is resolved
   var idArray = JSON.parse(event["regions"])
   var ids = idArray.join();
-  var areas = [];
+  var regions = [];
 
-  db.sequelize.query(
-    "SELECT * FROM \"Regions\" WHERE id IN (" + ids + ") ",
-    { type: db.sequelize.QueryTypes.SELECT}
-  ).then(
-    function (result) {
+  Region.byIds(ids)
+    .then(function (result) {
+      regions = regions.concat(result);
+      return Region.children(ids);
+    }).then(function (result) {
+    regions = regions.concat(result);
 
-      var zips = [];
-      for(var i = 0; i < result.length; i++){
-        var region = result[i];
-        if(region.area != null){
-          areas.push(region.area);
-        } else {
-          //split it up into zips and try to merge those
-          for (var j = 0; region.zips != null && j < region.zips.length; j++) {
-            var zip = region.zips[j];
-            if (zips.indexOf(zip) == -1) {
-              zips.push(zip);
-            }
-          }
-        }
-      }
+    var polygons = {
+      type: "FeatureCollection",
+      features: []
+    };
 
-      var zipsString = "'"+zips.join("','")+"'";
+    for (var i = 0; i < regions.length; i++) {
+      var region = regions[i];
+      var area = region.data["area"];
 
-      return db.sequelize.query(
-        "SELECT * FROM \"Regions\" WHERE name IN (" + zipsString + ") AND area IS NOT NULL",
-        { type: db.sequelize.QueryTypes.SELECT}
-      )
-
-    },
-    function (error) {
-      context.fail(error);
-    }
-  ).then(
-    function (result) {
-
-      var polygons = {
-        type: "FeatureCollection",
-        features: []
-      };
-
-      for(var i = 0; i < result.length; i++){
-        var region = result[i];
-        areas.push(region.area);
-      }
-      for(var i = 0; i < areas.length; i++){
-        var area = areas[i];
+      if (area != undefined && area != null) {
         area["properties"] = {};
         polygons["features"].push(area);
       }
-
-      var merged = turf.merge(polygons);
-
-      var response = {
-        id: null,
-        name: null,
-        type: null,
-        area: merged
-      }
-      context.succeed(response);
-    },
-    function (error) {
-      context.fail(error);
     }
-  )
+
+    var merged = turf.merge(polygons);
+
+    var response = {
+      id: null,
+      name: null,
+      type: null,
+      area: merged
+    };
+    context.succeed(response);
+
+  }).catch(function (error) {
+    context.fail(error);
+  });
+
 
 };

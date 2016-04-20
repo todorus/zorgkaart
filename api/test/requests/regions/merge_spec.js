@@ -3,6 +3,8 @@ require('../../spec_helper.js');
 var subject = require("../../../nodejscomponent/regions/merge/handler.js");
 var db = require("../../../nodejscomponent/lib/models");
 var Region = db["Region"];
+var CONTAINS = db["CONTAINS"];
+var Utils = db["Utils"];
 
 describe("/regions", function () {
 
@@ -95,55 +97,92 @@ describe("/regions", function () {
   before(
     function (done) {
       // Wipe db
-      db.sequelize.sync(
-        {force: true}
-      ).then(
+      Utils.wipe().then(
         function (result) {
 
           // Define zipcodes
           return Region.bulkCreate(
             [
-              {id: 1, name: "Maas", type: Region.TYPE_PLACE, zips: [1001, 1002, 1003]},
               {
-                id: 10,
-                name: '1001',
-                type: Region.TYPE_ZIP,
-                area: {type: "Feature", properties: {name: '1001'}, geometry: polyA},
-                zips: [1001]
+                name: "Maas",
+                code: "1001",
+                type: Region.TYPE_PLACE
               },
               {
-                id: 11,
-                name: '1002',
+                name: '1001',
+                code: '1001',
                 type: Region.TYPE_ZIP,
-                area: {type: "Feature", properties: {name: '1002'}, geometry: polyB},
-                zips: [1002]
+                area: {type: "Feature", properties: {name: '1001'}, geometry: polyA}
+              },
+              {
+                name: '1002',
+                code: '1002',
+                type: Region.TYPE_ZIP,
+                area: {type: "Feature", properties: {name: '1002'}, geometry: polyB}
               }
             ]
           )
         }
-      ).then(
+      ).then(function(result){
+         return CONTAINS.bulkCreate(
+          [
+            {
+              parent: {
+                code: "1001",
+                type: Region.TYPE_PLACE
+              },
+              child: {
+                code: '1001',
+                type: Region.TYPE_ZIP
+              }
+            },
+            {
+              parent: {
+                code: "1001",
+                type: Region.TYPE_PLACE
+              },
+              child: {
+                code: '1002',
+                type: Region.TYPE_ZIP
+              }
+            }
+          ]
+         )
+      }).then(
         function (result) {
           done();
-        },
-        function (error) {
-          throw error;
         }
-      )
+      ).catch(function(error){
+        done(error);
+      })
     }
-  )
+  );
 
   describe("/merge", function () {
 
-    describe("with Region that has multiple zipcodes", function () {
+    describe("with Region that has multiple children", function () {
 
-      var event = {
-        regions: "[ 1 ]"
-      }
+      var event = {}
 
-      var matchingRegion = {id: null, name: null, type: null, area: {type: "Feature", properties: {}, geometry: polyAB} };
+      before(function(done){
+        Region.find(
+          {
+            name: "Maas",
+            code: "1001",
+            type: Region.TYPE_PLACE
+          }
+        ).then(function(result){
+          event["regions"] = "[ "+result[0].data["_id"]+" ]";
+          done();
+        }).catch(function (error) {
+          done(error);
+        })
+      });
 
-      it("should return a list of all zipcodes ordered by name", function (done) {
-        var context = new MockContext()
+      var matchingRegion = {id: null, name: null, type: null, area: {type: "Feature", geometry: polyAB, properties: {}} };
+
+      it("should return an area comprised of that area and its children areas merged into one", function (done) {
+        var context = new MockContext();
         context.then(
           function (context) {
 
@@ -152,34 +191,18 @@ describe("/regions", function () {
 
             done();
           }
-        );
+        ).catch(function(error){
+          done(error);
+        });
 
         subject.handler(event, context);
       });
-    })
+    });
 
-    describe("with zipcodes", function () {
+    describe("with regions that have no children", function () {
 
-      var event = {
-        regions: "[ 10, 11]"
-      }
+      it("should return an area comprised of the areas of that node merged into one");
 
-      var matchingRegion = {id: null, name: null, type: null, area: {type: "Feature", properties: {}, geometry: polyAB} };
-
-      it("should return a list of all zipcodes ordered by name", function (done) {
-        var context = new MockContext()
-        context.then(
-          function (context) {
-
-            expect(context.error).toBe(null);
-            expect(context.response).toEqual(matchingRegion);
-
-            done();
-          }
-        );
-
-        subject.handler(event, context);
-      });
     })
   })
 
