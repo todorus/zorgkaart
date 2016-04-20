@@ -34,7 +34,7 @@ module.exports.handler = function (event, context) {
     query, limit, offset
   ).then(
     function (result) {
-      var response = Region.toJson(result);
+      var response = Region.toJson(result.data);
       context.succeed(response);
     },
     function (error) {

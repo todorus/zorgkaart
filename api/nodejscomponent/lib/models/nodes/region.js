@@ -194,13 +194,17 @@ module.exports = function (db, databaseName) {
     return deferred.promise;
   };
 
-  Region.toJson = function (result) {
+  Region.toJson = function (dataArray) {
     var response = [];
-    for (var i = 0; i < result.data.length; i++) {
-      var data = result.data[i];
+    for (var i = 0; i < dataArray.length; i++) {
+      var data = dataArray[i];
 
       if (data["area"]) {
         data["area"] = JSON.parse(data["area"]);
+      }
+      if (data["_id"]){
+        data["id"] = data["_id"];
+        delete data["_id"];
       }
       response.push(data);
     }
