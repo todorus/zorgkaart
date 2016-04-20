@@ -16,7 +16,7 @@ module.exports = db;
 module.exports.Region = require(__dirname + '/nodes/region.js')(db, databaseName);
 
 //relations
-module.exports.CONTAINS = require(__dirname + '/relations/CONTAINS.js')(db, databaseName);
+module.exports.CONTAINS = require(__dirname + '/relations/contains.js')(db, databaseName);
 
 //utility
 module.exports.Utils = require(__dirname + '/utils.js')(db, databaseName);

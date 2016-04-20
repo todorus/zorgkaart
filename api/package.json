@@ -13,7 +13,6 @@
     "test": "NODE_ENV=test ./node_modules/.bin/mocha --reporter spec --recursive"
   },
   "dependencies": {
-    "neo4j": "^2.0.0-RC2",
     "node-neo4j": "^2.0.3",
     "q": "^1.4.1",
     "serverless": "^0.5.3",
