@@ -1,7 +1,7 @@
 'use strict';
 var Q = require('q');
 
-var env = process.env.NODE_ENV || 'local';
+var env = process.env.NODE_ENV || 'development';
 var config = require(__dirname + '/../config/db.json')[env];
 
 //Create a db object. We will using this object to work on the DB.
