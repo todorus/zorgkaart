@@ -15,15 +15,49 @@ module.exports = function (db, databaseName) {
     return instance;
   };
 
+  CONTAINS.bulkCreate = function(propertiesArray){
+    var deferred = Q.defer();
+    var statements = [];
+    for (var i = 0; i < propertiesArray.length; i++) {
+      var props = propertiesArray[i];
+
+      var labels = buildLabels(CONTAINS.build(props));
+      var query =  "MATCH (parent:Region),(child:Region) " +
+        buildWhereClause(props) +
+        "CREATE (parent)-[r" + labels + "]->(child) " +
+        "RETURN r,parent,child";
+
+      var statement = {
+        statement: query,
+        parameters: props
+      };
+      statements.push(statement)
+    }
+
+    db.beginAndCommitTransaction({
+      statements: statements
+    }, function (err, result) {
+      if (err) {
+        deferred.reject(err);
+      } else if (result["errors"].length > 0) {
+        deferred.reject(result["errors"]);
+      } else {
+        deferred.resolve(result);
+      }
+    });
+
+    return deferred.promise;
+  }
+
   CONTAINS.prototype.setAll = function (properties) {
     for (var key in properties) {
       this.set(key, properties[key]);
     }
-  }
+  };
 
   CONTAINS.prototype.set = function (propertyName, value) {
     this.data[propertyName] = value != undefined ? value : null;
-  }
+  };
 
   CONTAINS.prototype.save = function () {
 
@@ -38,10 +72,6 @@ module.exports = function (db, databaseName) {
       // CREATE (a)-[r:RELTYPE { name : a.name + '<->' + b.name }]->(b)
       // RETURN r
 
-      var parentId = this.data["parentId"];
-      var childId = this.data["childId"];
-
-      var data = this.data;
       var query =  "MATCH (parent:Region),(child:Region) " +
         buildWhereClause(this.data) +
         "CREATE (parent)-[r" + labels + "]->(child) " +
@@ -63,7 +93,7 @@ module.exports = function (db, databaseName) {
     }
 
     return deferred.promise;
-  }
+  };
 
   function resultToRelations(result) {
     var converted = [];
