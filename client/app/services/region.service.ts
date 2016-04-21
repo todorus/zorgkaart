@@ -44,7 +44,6 @@ export class RegionService {
 
         this._selectionStore.push(region);
         this._selectionSubject.next(this._selectionStore);
-        this.updateMerged();
     }
 
     deselect(region:Region):void {

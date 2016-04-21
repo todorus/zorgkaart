@@ -16,7 +16,7 @@ export class MapComponent {
     map;
 
     constructor(private _regionService:RegionService) {
-        _regionService.merged$.subscribe(merged => this._showRegion(merged));
+        _regionService.selection$.subscribe(selection => this._showRegions(selection));
     }
 
     ngOnInit(){
@@ -40,34 +40,38 @@ export class MapComponent {
         this.map.fitBounds(netherlandsBounds, this.BOUNDS_OPTIONS);
     }
 
-    private _processSelection(selection: Region[]):void {
-        if(selection.length > 0){
-            this._showRegion(selection[selection.length-1]);
-        } else {
-            if(this.layer != null) {
-                this.map.removeLayer(this.layer);
-            }
-            this._defaultZoom();
-        }
-    }
-
-    private _showRegion(region:Region){
+    private _showRegions(regions:Region[]){
         if(this.layer != null){
             this.map.removeLayer(this.layer);
         }
 
-        if(region == null){
-            console.warn("No region to show", region);
-            this._defaultZoom();
-            return;
-        }
-        if(region.area == null){
-            console.warn("Region has no area", region);
+        if(regions == null || regions.length == 0){
+            console.warn("No regions to show", regions);
             this._defaultZoom();
             return;
         }
 
-        this.layer = L.geoJson(region.area);
+        var polygons = {
+            type: "FeatureCollection",
+            features: []
+        };
+
+        for (var i = 0; i < regions.length; i++) {
+            var region = regions[i];
+            var area = region.area;
+
+            if (area != undefined && area != null) {
+                polygons["features"].push(area);
+            }
+        }
+
+        if(polygons["features"].length == 0){
+            console.warn("Regions have no area", regions);
+            this._defaultZoom();
+            return;
+        }
+
+        this.layer = L.geoJson(polygons);
         if(this.layer != null) {
             this.map.addLayer(this.layer);
             this.map.fitBounds(this.layer, this.BOUNDS_OPTIONS);
