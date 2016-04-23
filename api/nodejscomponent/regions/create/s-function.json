@@ -13,7 +13,7 @@
   },
   "endpoints": [
     {
-      "path": "create",
+      "path": "regions",
       "method": "POST",
       "type": "AWS",
       "authorizationType": "none",
@@ -42,7 +42,7 @@
       }
     },
     {
-      "path": "create",
+      "path": "regions",
       "method": "OPTIONS",
       "type": "AWS",
       "authorizationType": "none",
