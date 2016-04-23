@@ -14,6 +14,7 @@ module.exports = function (db, databaseName) {
   Region.TYPE_PLACE = "Place";
   Region.TYPE_MUNICIPALITY = "Municipality";
   Region.TYPE_PROVINCE = "Province";
+  Region.TYPE_CARE = "Care";
 
   Region.build = function (properties) {
     var instance = new Region();
