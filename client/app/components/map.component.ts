@@ -1,6 +1,7 @@
 import {Component} from "angular2/core";
 import {RegionService} from "../services/region.service";
 import {Region} from "../model/region";
+import Polygon = L.Polygon;
 
 @Component({
     selector: 'map',
@@ -11,12 +12,16 @@ import {Region} from "../model/region";
 export class MapComponent {
 
     private BOUNDS_OPTIONS = {paddingTopLeft: [400, 10], paddingBottomRight: [10,10]};
+    private regionService:RegionService;
 
     layer;
     map;
 
     constructor(private _regionService:RegionService) {
-        _regionService.merged$.subscribe(merged => this._showRegion(merged));
+        this.regionService = _regionService;
+        console.log("construct", this.regionService);
+        _regionService.selection$.subscribe(selection => this._showRegions(selection));
+        _regionService.focus$.subscribe(region => this._hover(region));
     }
 
     ngOnInit(){
@@ -40,38 +45,99 @@ export class MapComponent {
         this.map.fitBounds(netherlandsBounds, this.BOUNDS_OPTIONS);
     }
 
-    private _processSelection(selection: Region[]):void {
-        if(selection.length > 0){
-            this._showRegion(selection[selection.length-1]);
-        } else {
-            if(this.layer != null) {
-                this.map.removeLayer(this.layer);
-            }
-            this._defaultZoom();
-        }
-    }
-
-    private _showRegion(region:Region){
+    private _showRegions(regions:Region[]){
         if(this.layer != null){
             this.map.removeLayer(this.layer);
         }
 
-        if(region == null){
-            console.warn("No region to show", region);
-            this._defaultZoom();
-            return;
-        }
-        if(region.area == null){
-            console.warn("Region has no area", region);
+        if(regions == null || regions.length == 0){
+            console.warn("No regions to show", regions);
             this._defaultZoom();
             return;
         }
 
-        this.layer = L.geoJson(region.area);
+        var polygons = {
+            type: "FeatureCollection",
+            features: []
+        };
+
+        for (var i = 0; i < regions.length; i++) {
+            var region = regions[i];
+            var area = region.area;
+            area["regionService"] = this.regionService;
+            area["region"] = region;
+
+            if (area != undefined && area != null) {
+                polygons["features"].push(area);
+            }
+        }
+
+        if(polygons["features"].length == 0){
+            console.warn("Regions have no area", regions);
+            this._defaultZoom();
+            return;
+        }
+
+        this.layer = L.geoJson(polygons);
         if(this.layer != null) {
+            this.layer.setStyle(
+                {
+                    color: '#35886F',
+                    fillColor: '#43AA8B'
+                }
+            );
+            this.layer.on(
+                {
+                    mouseover: this._onMouseOver,
+                    mouseout: this._onMouseOut,
+                    click: this._onClick
+                }
+            )
             this.map.addLayer(this.layer);
             this.map.fitBounds(this.layer, this.BOUNDS_OPTIONS);
         }
+    }
+
+    private _hover(region:Region):void {
+
+        this.layer.eachLayer(function(layer){
+            if(region == null || layer.feature.properties["id"] != region.id){
+                layer.setStyle(
+                    {
+                        color: '#35886F',
+                        fillColor: '#43AA8B'
+                    }
+                )
+            } else {
+                layer.setStyle(
+                    {
+                        color: '#255F4E',
+                        fillColor: '#2D755F'
+                    }
+                )
+            }
+        });
+    }
+
+    private _onMouseOver(e){
+        var feature =  e.layer.feature;
+        var region = feature.region;
+        var regionService = feature.regionService;
+        regionService.focus(region);
+    }
+
+    private _onMouseOut(e){
+        var feature =  e.layer.feature;
+        var region = feature.region;
+        var regionService = feature.regionService;
+        regionService.focus(null);
+    }
+
+    private _onClick(e){
+        var feature =  e.layer.feature;
+        var region = feature.region;
+        var regionService = feature.regionService;
+        regionService.deselect(region);
     }
 
 }

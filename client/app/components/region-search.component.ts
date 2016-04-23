@@ -8,7 +8,7 @@ import {RegionService} from "../services/region.service";
     <input class="regionquery" #query [value]="_inputValue" (keyup)="onKey($event, query.value)"/>
     <ul class="regions">
       <li *ngFor="#region of regions" (click)="select(region)"
-        [ngClass]="{focus: region.focused}">
+        [ngClass]="{focus: region.hover}">
         {{region.name}}
         <span [ngSwitch]="region.type">
           <span *ngSwitchWhen="1">(Postcode)</span>
