@@ -158,7 +158,7 @@ describe("/regions", function () {
     }
   );
 
-  describe("/merge", function () {
+  describe(" create", function () {
 
     describe("with Region that has multiple children", function () {
 
@@ -194,7 +194,7 @@ describe("/regions", function () {
         context.then(
           function (context) {
 
-            filterIds(context.response);
+            filterIds([context.response]);
 
             expect(context.error).toBe(null);
             expect(context.response).toEqual(matchingRegion);
