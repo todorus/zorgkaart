@@ -22,10 +22,6 @@ import {RegionService} from "../services/region.service";
         ul.regions li {
             cursor: pointer;
         }
-        /*ul.regions li:hover {*/
-            /*background: #2D755F;*/
-            /*border: solid 1px #255F4E;*/
-        /*}*/
         ul.regions li.focused {
             background: #2D755F;
             border: solid 1px #255F4E;
