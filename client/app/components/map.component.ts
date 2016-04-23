@@ -1,6 +1,7 @@
 import {Component} from "angular2/core";
 import {RegionService} from "../services/region.service";
 import {Region} from "../model/region";
+import Polygon = L.Polygon;
 
 @Component({
     selector: 'map',
@@ -11,12 +12,16 @@ import {Region} from "../model/region";
 export class MapComponent {
 
     private BOUNDS_OPTIONS = {paddingTopLeft: [400, 10], paddingBottomRight: [10,10]};
+    private regionService:RegionService;
 
     layer;
     map;
 
     constructor(private _regionService:RegionService) {
+        this.regionService = _regionService;
+        console.log("construct", this.regionService);
         _regionService.selection$.subscribe(selection => this._showRegions(selection));
+        _regionService.focus$.subscribe(region => this._hover(region));
     }
 
     ngOnInit(){
@@ -59,6 +64,8 @@ export class MapComponent {
         for (var i = 0; i < regions.length; i++) {
             var region = regions[i];
             var area = region.area;
+            area["regionService"] = this.regionService;
+            area["region"] = region;
 
             if (area != undefined && area != null) {
                 polygons["features"].push(area);
@@ -73,9 +80,64 @@ export class MapComponent {
 
         this.layer = L.geoJson(polygons);
         if(this.layer != null) {
+            this.layer.setStyle(
+                {
+                    color: '#35886F',
+                    fillColor: '#43AA8B'
+                }
+            );
+            this.layer.on(
+                {
+                    mouseover: this._onMouseOver,
+                    mouseout: this._onMouseOut,
+                    click: this._onClick
+                }
+            )
             this.map.addLayer(this.layer);
             this.map.fitBounds(this.layer, this.BOUNDS_OPTIONS);
         }
+    }
+
+    private _hover(region:Region):void {
+
+        this.layer.eachLayer(function(layer){
+            if(region == null || layer.feature.properties["id"] != region.id){
+                layer.setStyle(
+                    {
+                        color: '#35886F',
+                        fillColor: '#43AA8B'
+                    }
+                )
+            } else {
+                layer.setStyle(
+                    {
+                        color: '#255F4E',
+                        fillColor: '#2D755F'
+                    }
+                )
+            }
+        });
+    }
+
+    private _onMouseOver(e){
+        var feature =  e.layer.feature;
+        var region = feature.region;
+        var regionService = feature.regionService;
+        regionService.focus(region);
+    }
+
+    private _onMouseOut(e){
+        var feature =  e.layer.feature;
+        var region = feature.region;
+        var regionService = feature.regionService;
+        regionService.focus(null);
+    }
+
+    private _onClick(e){
+        var feature =  e.layer.feature;
+        var region = feature.region;
+        var regionService = feature.regionService;
+        regionService.deselect(region);
     }
 
 }

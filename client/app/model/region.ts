@@ -1,8 +1,8 @@
 enum Type {
-    Zip = 1,
-    Place = 100,
-    Municipality = 200,
-    Province = 300
+    Zip = "Zip",
+    Place = "Place",
+    Municipality = "Municipality",
+    Province = "Province"
 }
 
 export class Region {
@@ -11,9 +11,10 @@ export class Region {
 
     id: number;
     name: string;
-    type: number;
+    type: string;
     area: any;
 
     // Client
     focused: boolean = false;
+    hover: boolean = false;
 }

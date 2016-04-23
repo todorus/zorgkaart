@@ -46,7 +46,7 @@ function process(i) {
 
       var area = data;
       area["properties"] = {
-        id: region.properties["_id"],
+        id: region.data["_id"],
         name: name,
         description: null,
         type: Region.TYPE_MUNICIPALITY

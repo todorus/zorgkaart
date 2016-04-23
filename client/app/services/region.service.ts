@@ -14,6 +14,10 @@ export class RegionService {
     private _selectionSubject:Subject<Region[]> = new Subject<Region[]>()
     selection$ = this._selectionSubject.asObservable();
 
+    private _focusStore:Region = null;
+    private _focusSubject:Subject<Region> = new Subject<Region>()
+    focus$ = this._focusSubject.asObservable();
+
     private _mergedSubject:Subject<Region> = new Subject<Region>();
     merged$ = this._mergedSubject.asObservable();
 
@@ -56,6 +60,14 @@ export class RegionService {
                 return;
             }
         }
+    }
+
+    focus(region:Region):void {
+        for(var i:Number = 0; i < this._selectionStore.length; i++){
+            var candidate:Region = this._selectionStore[i];
+            candidate.hover = region != null && region.id == candidate.id;
+        }
+        this._focusSubject.next(region);
     }
 
     private updateMerged(){
