@@ -123,8 +123,8 @@ describe("/regions", function () {
             ]
           )
         }
-      ).then(function(result){
-         return CONTAINS.bulkCreate(
+      ).then(function (result) {
+        return CONTAINS.bulkCreate(
           [
             {
               parent: {
@@ -147,12 +147,12 @@ describe("/regions", function () {
               }
             }
           ]
-         )
+        )
       }).then(
         function (result) {
           done();
         }
-      ).catch(function(error){
+      ).catch(function (error) {
         done(error);
       })
     }
@@ -170,14 +170,14 @@ describe("/regions", function () {
         children: []
       };
 
-      before(function(done){
+      before(function (done) {
         Region.find(
           {
             name: "Maas",
             code: "1001",
             type: Region.TYPE_PLACE
           }
-        ).then(function(result){
+        ).then(function (result) {
           event["children"] = [
             result[0].data["_id"]
           ];
@@ -187,7 +187,12 @@ describe("/regions", function () {
         })
       });
 
-      var matchingRegion = {name: "name", description: "description", type: Region.TYPE_CARE, area: {type: "Feature", geometry: polyAB, properties: {}} };
+      var matchingRegion = {
+        name: "name",
+        description: "description",
+        type: Region.TYPE_CARE,
+        area: {type: "Feature", geometry: polyAB, properties: {}}
+      };
 
       it("should return create a new Region with the combined area", function (done) {
         var context = new MockContext();
@@ -201,12 +206,127 @@ describe("/regions", function () {
 
             done();
           }
-        ).catch(function(error){
+        ).catch(function (error) {
           done(error);
         });
 
         subject.handler(event, context);
       });
+    });
+
+    describe("without a name", function () {
+
+      var event = {
+        name: null,
+        description: "description",
+        children: []
+      };
+
+      before(function (done) {
+        Region.find(
+          {
+            name: "Maas",
+            code: "1001",
+            type: Region.TYPE_PLACE
+          }
+        ).then(function (result) {
+          event["children"] = [
+            result[0].data["_id"]
+          ];
+          done();
+        }).catch(function (error) {
+          done(error);
+        })
+      });
+
+      it("should throw an error", function (done) {
+        var context = new MockContext();
+        context.then(
+          function (context) {
+
+            expect(context.error).toNotBe(null);
+            done();
+
+          }
+        ).catch(function (error) {
+          done(error);
+        });
+
+        subject.handler(event, context);
+      });
+
+      it("should not create a new region", function (done) {
+        var oldCount;
+        var context = new MockContext();
+        context.then(function(response){
+          return Region.count();
+        }).then(function(newCount){
+          expect(newCount).toEqual(oldCount);
+          done();
+
+        }).catch(function (error) {
+          done(error);
+        });
+
+        Region.count().then(
+          function (count) {
+            oldCount = count;
+            subject.handler(event, context);
+          }
+        ).catch(function(error){
+           done(error);
+        });
+      });
+
+    });
+
+    describe("without children ids", function () {
+
+      var event = {
+        name: "name",
+        description: "description",
+        children: null
+      };
+
+      it("should throw an error", function (done) {
+        var context = new MockContext();
+        context.then(
+          function (context) {
+
+            expect(context.error).toNotBe(null);
+            done();
+
+          }
+        ).catch(function (error) {
+          done(error);
+        });
+
+        subject.handler(event, context);
+      });
+
+      it("should not create a new region", function (done) {
+        var oldCount;
+        var context = new MockContext();
+        context.then(function(response){
+          return Region.count();
+        }).then(function(newCount){
+          expect(newCount).toEqual(oldCount);
+          done();
+
+        }).catch(function (error) {
+          done(error);
+        });
+
+        Region.count().then(
+          function (count) {
+            oldCount = count;
+            subject.handler(event, context);
+          }
+        ).catch(function(error){
+          done(error);
+        });
+      });
+
     });
 
     describe("with regions that have no children", function () {
