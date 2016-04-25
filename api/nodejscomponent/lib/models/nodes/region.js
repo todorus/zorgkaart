@@ -14,6 +14,7 @@ module.exports = function (db, databaseName) {
   Region.TYPE_PLACE = "Place";
   Region.TYPE_MUNICIPALITY = "Municipality";
   Region.TYPE_PROVINCE = "Province";
+  Region.TYPE_CARE = "Care";
 
   Region.build = function (properties) {
     var instance = new Region();
@@ -55,6 +56,10 @@ module.exports = function (db, databaseName) {
 
     var region = Region.build(properties);
     var labels = buildLabels(region);
+
+    if (properties["area"] != null) {
+      properties["area"] = JSON.stringify(properties["area"]);
+    }
 
     Region.db.cypherQuery(
       "MERGE (" +
@@ -194,23 +199,33 @@ module.exports = function (db, databaseName) {
     return deferred.promise;
   };
 
-  Region.toJson = function (dataArray) {
-    var response = [];
-    for (var i = 0; i < dataArray.length; i++) {
-      var data = dataArray[i];
+  Region.toJson = function (input) {
+    var response;
 
-      if (data["area"]) {
+    if(Array.isArray(input)) {
+      response = [];
+
+      for (var i = 0; i < input.length; i++) {
+        var data = input[i];
+        response.push(Region.toJson(data));
+      }
+
+    } else {
+      var data = input;
+
+      if (data["area"] && data["area"] != undefined && typeof data["area"] == typeof("")) {
         data["area"] = JSON.parse(data["area"]);
       }
-      if (data["_id"]){
+      if (data["_id"]) {
         data["id"] = data["_id"];
         delete data["_id"];
       }
-      response.push(data);
+
+      response = data;
     }
 
     return response;
-  }
+  };
 
   Region.prototype.setAll = function (properties) {
     for (var key in properties) {

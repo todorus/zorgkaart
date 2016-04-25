@@ -66,8 +66,7 @@ describe("/regions", function () {
         }
       ).fail(
         function(error){
-          console.log(error);
-          throw new Error(error);
+          done(error);
         }
       );
 
