@@ -75,7 +75,7 @@ ul.pill li {
 }
 
 /*
-    INPUTS
+    FORMS
 */
 input {
     padding: 10px;
@@ -85,6 +85,24 @@ input {
 
     border: solid 1px #CED1D2;
     background: #F7F7F7;
+}
+
+input[type=submit] {
+
+    width: 100%;
+
+    border: none;
+    background: #43AA8B;
+
+    color: #FFF;
+    font-family: Roboto-medium;
+    font-size: 14px;
+    text-align: center;
+
+    cursor: pointer;
+}
+input[type=submit]:hover {
+    background: #2D755F;
 }
 
 /*

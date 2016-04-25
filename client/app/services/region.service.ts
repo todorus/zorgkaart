@@ -34,6 +34,18 @@ export class RegionService {
             .catch(this.handleError);
     }
 
+    create(name:String, description:String, children:Number[]):Observable {
+        var body = {
+            name: name,
+            description: description,
+            children: children
+        };
+
+        return this._http.post(this._regionsUrl, JSON.stringify(body))
+            .map(res => <Region> res.json())
+            .catch(this.handleError)
+    }
+
     private handleError(error:Response) {
         // in a real world app, we may send the error to some remote logging infrastructure
         // instead of just logging it to the console
