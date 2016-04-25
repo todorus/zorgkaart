@@ -33,7 +33,7 @@ MockContext.prototype.done = function (error, response) {
   this.response = response;
 
   if (error) {
-    this.deferred.reject(error);
+    this.deferred.fulfill(error);
   } else {
     this.deferred.fulfill(this);
   }
