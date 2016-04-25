@@ -214,6 +214,60 @@ describe("/regions", function () {
       });
     });
 
+    describe("with Regions that have no children", function () {
+
+
+
+      var event = {
+        name: "name",
+        description: "description",
+        children: []
+      };
+
+      before(function (done) {
+        Region.find(
+          {
+            type: Region.TYPE_ZIP
+          }
+        ).then(function (result) {
+          for(var i=0; i < result.length; i++){
+            event["children"].push(result[i].data["_id"]);
+          }
+
+          done();
+        }).catch(function (error) {
+          done(error);
+        })
+      });
+
+      var matchingRegion = {
+        name: "name",
+        description: "description",
+        type: Region.TYPE_CARE,
+        area: {type: "Feature", geometry: polyAB, properties: {}}
+      };
+
+      it("should return create a new Region with the combined area", function (done) {
+        var context = new MockContext();
+        context.then(
+          function (context) {
+
+            filterIds([context.response]);
+
+            expect(context.error).toBe(null);
+            expect(context.response).toEqual(matchingRegion);
+
+            done();
+          }
+        ).catch(function (error) {
+          done(error);
+        });
+
+        subject.handler(event, context);
+      });
+
+    });
+
     describe("without a name", function () {
 
       var event = {
@@ -329,11 +383,6 @@ describe("/regions", function () {
 
     });
 
-    describe("with regions that have no children", function () {
-
-      it("should return an area comprised of the areas of the supplied regions merged into one");
-
-    })
   })
 
 });
