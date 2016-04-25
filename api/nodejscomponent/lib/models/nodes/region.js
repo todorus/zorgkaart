@@ -27,6 +27,23 @@ module.exports = function (db, databaseName) {
     return instance.save()
   };
 
+  Region.count = function(){
+    var deferred = Q.defer();
+
+    Region.db.cypherQuery(
+      "MATCH (n:Region) RETURN COUNT(n)",
+      function (error, result) {
+        if (error) {
+          deferred.reject(new Error(error));
+        } else {
+          deferred.resolve(result.data[0]);
+        }
+      }
+    );
+
+    return deferred.promise;
+  };
+
   Region.find = function (properties) {
     var deferred = Q.defer();
 
