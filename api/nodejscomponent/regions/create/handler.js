@@ -18,6 +18,8 @@ var Region = db["Region"];
 // Lambda Handler
 module.exports.handler = function (event, context) {
 
+  console.log("event", event);
+
   if(event["children"] == null || event["children"] == undefined){
     context.fail(new Error("must provide children ids"));
     return;
