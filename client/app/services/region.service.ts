@@ -1,6 +1,6 @@
 import {Injectable} from "angular2/core";
 import {Region} from "../model/region";
-import {Http, Response, URLSearchParams} from "angular2/http";
+import {Http, Response, URLSearchParams, RequestOptions, Headers} from "angular2/http";
 import {Observable} from "rxjs/Observable";
 import {Subject} from "rxjs/Subject";
 
@@ -35,14 +35,21 @@ export class RegionService {
     }
 
     create(name:String, description:String, children:Number[]):Observable {
+
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = new RequestOptions({ headers: headers });
+
         var body = {
             name: name,
             description: description,
             children: children
         };
 
-        return this._http.post(this._regionsUrl, JSON.stringify(body))
-            .map(res => <Region> res.json())
+        return this._http.post(this._regionsUrl, JSON.stringify(body), options)
+            .map(res => {
+                console.log("result", res);
+                <Region> res.json();
+            })
             .catch(this.handleError)
     }
 

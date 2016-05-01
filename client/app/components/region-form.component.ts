@@ -4,6 +4,7 @@ import {NgForm}    from 'angular2/common';
 import {RegionService} from "../services/region.service";
 import {RegionSelectionComponent} from "./region-selection.component";
 import {RegionSearchComponent} from "./region-search.component";
+import {Headers, RequestOptions} from "angular2/http";
 
 @Component({
     selector: 'region-form',
@@ -22,7 +23,7 @@ import {RegionSearchComponent} from "./region-search.component";
         <region-search></region-search>
         <region-selection></region-selection>
         
-        <input type="submit" value="OPSLAAN" />
+        <input type="submit" value="OPSLAAN" (click)="onSubmit()"/>
     </form>
   `,
     styles: [`
@@ -46,6 +47,14 @@ export class RegionFormComponent {
             this.model.children = ids;
         });
     }
+
+    onSubmit(){
+        this._regionService.create(this.model.name, this.model.description, this.model.children).subscribe(
+            region => console.log("region", region),
+            error => console.log("error", error)
+        );;
+    }
+
 }
 
 class RegionFormModel {
