@@ -5,8 +5,8 @@
   "customName": false,
   "customRole": false,
   "handler": "regions/create/handler.handler",
-  "timeout": 6,
-  "memorySize": 1024,
+  "timeout": 30,
+  "memorySize": 1536,
   "authorizer": {},
   "custom": {
     "excludePatterns": []
