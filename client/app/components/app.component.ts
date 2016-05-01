@@ -1,9 +1,8 @@
-import {Component} from 'angular2/core';
-import {RegionService} from '../services/region.service';
-import {RegionSearchComponent} from './region-search.component';
+import {Component} from "angular2/core";
+import {RegionService} from "../services/region.service";
 import {HTTP_PROVIDERS} from "angular2/http";
 import {MapComponent} from "./map.component";
-import {RegionSelectionComponent} from "./region-selection.component";
+import {RegionFormComponent} from "./region-form.component";
 
 @Component({
   selector: 'my-app',
@@ -11,13 +10,11 @@ import {RegionSelectionComponent} from "./region-selection.component";
     <map></map>
     <div id="side_menu_container">
       <div id="side_menu">
-          <h2>REGIO</h2>
-          <region-selection></region-selection>
-          <region-search></region-search>
+          <region-form></region-form>
       </div>
     </div>
   `,
-  directives: [RegionSearchComponent, MapComponent, RegionSelectionComponent],
+  directives: [RegionFormComponent, MapComponent],
   providers: [RegionService, HTTP_PROVIDERS]
 })
 export class AppComponent { }

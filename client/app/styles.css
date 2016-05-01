@@ -36,6 +36,11 @@ body, input[text], button {
     color: #000;
     font-family: Roboto-regular, Arial, Helvetica, sans-serif;
 }
+label {
+    display: block;
+    margin-top: 10px;
+    font-family: Roboto-medium, Arial, Helvetica, sans-serif;
+}
 
 /*
     LISTS
@@ -75,16 +80,37 @@ ul.pill li {
 }
 
 /*
-    INPUTS
+    FORMS
 */
-input {
+input, textarea {
+    width: 100%;
     padding: 10px;
+    margin-top: 20px;
+
     color: #000;
     font-size: 14px;
     box-shadow: none;
 
     border: solid 1px #CED1D2;
     background: #F7F7F7;
+}
+
+input[type=submit] {
+
+    width: 100%;
+
+    border: none;
+    background: #43AA8B;
+
+    color: #FFF;
+    font-family: Roboto-medium;
+    font-size: 14px;
+    text-align: center;
+
+    cursor: pointer;
+}
+input[type=submit]:hover {
+    background: #2D755F;
 }
 
 /*
@@ -112,4 +138,6 @@ input {
     height: 100%;
     padding: 20px 50px 50px;
     background: #FFF;
+
+    overflow: auto;
 }
