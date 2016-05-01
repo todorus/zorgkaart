@@ -14,7 +14,7 @@ import {RegionSearchComponent} from "./region-search.component";
         <label>Naam*</label>
         <input type="text" placeholder="naam" [(ngModel)]="model.name"/>
         <label>Beschrijving</label>
-        <input placeholder="beschrijving" [(ngModel)]="model.description" />
+        <textarea placeholder="beschrijving" [(ngModel)]="model.description"></textarea>
         <label>Gebied*</label>
         <p>
             Vul hier de postcodes, gemeentes of provincies welke het gebied omvangt.
