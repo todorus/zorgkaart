@@ -5,7 +5,8 @@ import {RegionService} from "../services/region.service";
 @Component({
     selector: 'region-search',
     template: `
-    <input class="regionquery" #query [value]="_inputValue" (keyup)="onKey($event, query.value)"/>
+    <input class="regionquery" placeholder="gemeentes, postcodes, zorgregios"
+     #query [value]="_inputValue" (keyup)="onKey($event, query.value)"/>
     <ul class="regions">
       <li *ngFor="#region of regions" (click)="select(region)"
         [ngClass]="{focus: region.hover}">

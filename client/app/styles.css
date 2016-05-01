@@ -36,6 +36,11 @@ body, input[text], button {
     color: #000;
     font-family: Roboto-regular, Arial, Helvetica, sans-serif;
 }
+label {
+    display: block;
+    margin-top: 10px;
+    font-family: Roboto-medium, Arial, Helvetica, sans-serif;
+}
 
 /*
     LISTS
@@ -78,7 +83,10 @@ ul.pill li {
     FORMS
 */
 input {
+    width: 100%;
     padding: 10px;
+    margin-top: 20px;
+
     color: #000;
     font-size: 14px;
     box-shadow: none;
@@ -130,4 +138,6 @@ input[type=submit]:hover {
     height: 100%;
     padding: 20px 50px 50px;
     background: #FFF;
+
+    overflow: auto;
 }
