@@ -41,6 +41,16 @@ label {
     margin-top: 10px;
     font-family: Roboto-medium, Arial, Helvetica, sans-serif;
 }
+.error {
+    font-family: Roboto-medium, Arial, Helvetica, sans-serif;
+    background: #ff050c;
+    color: #FFF;
+    padding: 8px;
+    text-align: center;
+}
+.hide {
+    display: none;
+}
 
 /*
     LISTS
