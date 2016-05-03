@@ -1,11 +1,6 @@
 'use strict';
 
-/**
- * Serverless Module: Lambda Handler
- * - Your lambda functions should be a thin wrapper around your own separate
- * modules, to keep your code testable, reusable and AWS independent
- * - 'serverless-helpers-js' module is required for Serverless ENV var support.  Hopefully, AWS will add ENV support to Lambda soon :)
- */
+//TODO use a transaction to make to create the new Region and connect it to its children in one action
 
 // Require Serverless ENV vars
 var env = require('serverless-helpers-js').loadEnv();
@@ -14,11 +9,12 @@ var env = require('serverless-helpers-js').loadEnv();
 var turf = require('turf');
 var db = require(__dirname + '/../../lib/models');
 var Region = db["Region"];
+var CONTAINS = db["CONTAINS"];
 
 // Lambda Handler
 module.exports.handler = function (event, context) {
 
-  console.log("event", event);
+  // console.log("event", event);
 
   if(event["children"] == null || event["children"] == undefined){
     context.fail(new Error("must provide children ids"));
@@ -26,11 +22,16 @@ module.exports.handler = function (event, context) {
   }
 
   if(event["name"] == null || event["name"] == undefined){
-    context.fail(new Error("must provide children ids"));
+    context.fail(new Error("must provide a name"));
     return;
   }
 
-  var ids = event["children"].join();
+  var created = null;
+
+  var childIds = event["children"].filter(function(elem, pos, self){
+    return self.indexOf(elem) == pos;
+  });
+
   var regions = [];
   var properties = {
     name: event["name"],
@@ -38,10 +39,10 @@ module.exports.handler = function (event, context) {
     type: Region.TYPE_CARE
   };
 
-  Region.byIds(ids)
+  Region.byIds(childIds)
     .then(function (result) {
       regions = regions.concat(result);
-      return Region.children(ids);
+      return Region.children(childIds);
     }).then(function (result) {
     regions = regions.concat(result);
 
@@ -67,7 +68,29 @@ module.exports.handler = function (event, context) {
 
   }).then(function(result){
 
-    var response = Region.toJson(result[0].data);
+    created = result[0];
+    var parentId = created.data["_id"]
+
+    var propertiesArray = [];
+    for(var i=0; i < childIds.length; i++){
+      var childId = childIds[i];
+      var props = {
+        parent: {
+          _id: parentId
+        },
+        child: {
+          _id: childId
+        }
+      };
+
+      propertiesArray.push(props);
+    }
+
+    return CONTAINS.bulkCreate(propertiesArray);
+
+  }).then(function(result){
+
+    var response = Region.toJson(created.data);
     context.succeed(response);
 
   }).catch(function (error) {

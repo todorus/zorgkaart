@@ -101,20 +101,8 @@ module.exports = function (db, databaseName) {
     var statements = [];
     for (var i = 0; i < propertiesArray.length; i++) {
       var props = propertiesArray[i];
-      if (props["area"] != null) {
-        props["area"] = JSON.stringify(props["area"]);
-      }
+      var statement = Region.buildStatement(props);
 
-      var labels = buildLabels(Region.build(props));
-      var query = 'CREATE (' +
-        'n' + labels +
-        buildPropertyQuery(props) +
-        ') RETURN n';
-
-      var statement = {
-        statement: query,
-        parameters: props
-      }
       statements.push(statement)
     }
 
@@ -132,6 +120,25 @@ module.exports = function (db, databaseName) {
 
     return deferred.promise;
   };
+
+  Region.buildStatement = function(properties){
+    if (properties["area"] != null) {
+      properties["area"] = JSON.stringify(properties["area"]);
+    }
+
+    var labels = buildLabels(Region.build(properties));
+    var query = 'CREATE (' +
+      'n' + labels +
+      buildPropertyQuery(properties) +
+      ') RETURN n';
+
+    var statement = {
+      statement: query,
+      parameters: properties
+    };
+
+    return statement;
+  }
 
   Region.search = function (name, limit, skip) {
     var deferred = Q.defer();

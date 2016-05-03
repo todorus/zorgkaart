@@ -20,17 +20,8 @@ module.exports = function (db, databaseName) {
     var statements = [];
     for (var i = 0; i < propertiesArray.length; i++) {
       var props = propertiesArray[i];
+      var statement = CONTAINS.buildStatement(props);
 
-      var labels = buildLabels(CONTAINS.build(props));
-      var query =  "MATCH (parent:Region),(child:Region) " +
-        buildWhereClause(props) +
-        "CREATE (parent)-[r" + labels + "]->(child) " +
-        "RETURN r,parent,child";
-
-      var statement = {
-        statement: query,
-        parameters: props
-      };
       statements.push(statement)
     }
 
@@ -48,6 +39,21 @@ module.exports = function (db, databaseName) {
 
     return deferred.promise;
   }
+
+  CONTAINS.buildStatement = function(properties){
+    var labels = buildLabels(CONTAINS.build(properties));
+    var query =  "MATCH (parent:Region),(child:Region) " +
+      buildWhereClause(properties) +
+      "CREATE (parent)-[r" + labels + "]->(child) " +
+      "RETURN r,parent,child";
+
+    var statement = {
+      statement: query,
+      parameters: properties
+    };
+
+    return statement;
+  };
 
   CONTAINS.prototype.setAll = function (properties) {
     for (var key in properties) {
@@ -117,7 +123,9 @@ module.exports = function (db, databaseName) {
     } else {
       throw(new Error("must supply a parents id or code"));
     }
-    parentClause += " AND parent.type='"+data["parent"]["type"]+"'";
+    if(data["parent"]["type"]) {
+      parentClause += " AND parent.type='" + data["parent"]["type"] + "'";
+    }
 
     var childClause;
     if (data["child"]["_id"] != undefined && data["child"]["_id"] != null) {
@@ -125,9 +133,11 @@ module.exports = function (db, databaseName) {
     } else if (data["child"]["code"] != undefined && data["child"]["code"] != null) {
       childClause = " child.code = '" + data["child"]["code"] + "' ";
     } else {
-      throw(new Error("must supply a parents id or code"));
+      throw(new Error("must supply a childs id or code"));
     }
-    childClause += " AND child.type='"+data["child"]["type"]+"'";
+    if(data["child"]["type"]) {
+      childClause += " AND child.type='" + data["child"]["type"] + "'";
+    }
 
     return "WHERE " + parentClause + " AND " + childClause + " ";
   }

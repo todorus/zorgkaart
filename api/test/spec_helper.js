@@ -12,7 +12,7 @@ global.filterIds = function (response) {
 var Q = require("q");
 
 // disable logging
-//console.log = function() {}
+// console.log = function() {}
 
 function MockContext(callback) {
   this.successfull = false;

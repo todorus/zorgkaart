@@ -199,9 +199,9 @@ describe("/regions", function () {
         context.then(
           function (context) {
 
-            filterIds([context.response]);
-
             expect(context.error).toBe(null);
+
+            filterIds([context.response]);
             expect(context.response).toEqual(matchingRegion);
 
             done();
@@ -212,6 +212,44 @@ describe("/regions", function () {
 
         subject.handler(event, context);
       });
+
+      it("should create connections between the new Region and its child", function (done) {
+        var context = new MockContext();
+        var response = null;
+
+        context.then(
+          function (context) {
+
+            response = context.response;
+
+            return Region.children(response["id"]);
+          }
+        ).then(function(children){
+
+          for(var i=0; i < event["children"].length; i++){
+            var found = false;
+            var childId = event["children"][i];
+
+            for(var j=0; j < children.length; j ++){
+              var child = children[j];
+              if(child.data["_id"] == childId){
+                found = true;
+                break;
+              }
+            }
+
+            expect(found).toBeTruthy();
+          }
+
+          done();
+
+        }).catch(function (error) {
+          done(error);
+        });
+
+        subject.handler(event, context);
+      });
+
     });
 
     describe("with Regions that have no children", function () {
@@ -252,14 +290,51 @@ describe("/regions", function () {
         context.then(
           function (context) {
 
-            filterIds([context.response]);
-
             expect(context.error).toBe(null);
+
+            filterIds([context.response]);
             expect(context.response).toEqual(matchingRegion);
 
             done();
           }
         ).catch(function (error) {
+          done(error);
+        });
+
+        subject.handler(event, context);
+      });
+
+      it("should create connections between the new Region and its children", function (done) {
+        var context = new MockContext();
+        var response = null;
+
+        context.then(
+          function (context) {
+
+            response = context.response;
+
+            return Region.children(response["id"]);
+          }
+        ).then(function(children){
+
+          for(var i=0; i < event["children"].length; i++){
+            var found = false;
+            var childId = event["children"][i];
+
+            for(var j=0; j < children.length; j ++){
+              var child = children[j];
+              if(child.data["_id"] == childId){
+                found = true;
+                break;
+              }
+            }
+
+            expect(found).toBeTruthy();
+          }
+
+          done();
+
+        }).catch(function (error) {
           done(error);
         });
 
