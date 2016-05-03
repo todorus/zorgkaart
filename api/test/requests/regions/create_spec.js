@@ -343,6 +343,72 @@ describe("/regions", function () {
 
     });
 
+    describe("with a name of 0 length", function () {
+
+      var event = {
+        name: "",
+        description: "description",
+        children: []
+      };
+
+      before(function (done) {
+        Region.find(
+          {
+            name: "Maas",
+            code: "1001",
+            type: Region.TYPE_PLACE
+          }
+        ).then(function (result) {
+          event["children"] = [
+            result[0].data["_id"]
+          ];
+          done();
+        }).catch(function (error) {
+          done(error);
+        })
+      });
+
+      it("should throw an error", function (done) {
+        var context = new MockContext();
+        context.then(
+          function (context) {
+
+            expect(context.error).toNotBe(null);
+            done();
+
+          }
+        ).catch(function (error) {
+          done(error);
+        });
+
+        subject.handler(event, context);
+      });
+
+      it("should not create a new region", function (done) {
+        var oldCount;
+        var context = new MockContext();
+        context.then(function(response){
+          return Region.count();
+        }).then(function(newCount){
+          expect(newCount).toEqual(oldCount);
+          done();
+
+        }).catch(function (error) {
+          done(error);
+        });
+
+        Region.count().then(
+          function (count) {
+            oldCount = count;
+            subject.handler(event, context);
+          }
+        ).catch(function(error){
+          done(error);
+        });
+      });
+
+    });
+
     describe("without a name", function () {
 
       var event = {
