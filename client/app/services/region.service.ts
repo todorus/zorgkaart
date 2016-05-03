@@ -57,7 +57,7 @@ export class RegionService {
         // in a real world app, we may send the error to some remote logging infrastructure
         // instead of just logging it to the console
         console.error(error);
-        return Observable.throw(error.json().error || 'Server error');
+        return Observable.throw(error.json().fault || error);
     }
 
     select(region:Region):void {

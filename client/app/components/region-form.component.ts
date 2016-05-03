@@ -12,6 +12,7 @@ import {Headers, RequestOptions} from "angular2/http";
     template: `
     <form class="regionForm">
         <h2>REGIO</h2>
+        <p class="error" [ngClass]="{hide: !(_errorMessage)}">{{_errorMessage}}</p>
         <label>Naam*</label>
         <input type="text" placeholder="naam" [(ngModel)]="model.name"/>
         <label>Beschrijving</label>
@@ -34,6 +35,7 @@ import {Headers, RequestOptions} from "angular2/http";
 })
 export class RegionFormComponent {
 
+    private _errorMessage:String;
     model:RegionFormModel = new RegionFormModel();
 
     constructor(private _regionService:RegionService) {
@@ -50,8 +52,11 @@ export class RegionFormComponent {
 
     onSubmit(){
         this._regionService.create(this.model.name, this.model.description, this.model.children).subscribe(
-            region => console.log("region", region),
-            error => console.log("error", error)
+            region => console.log("created response:", region),
+            error => {
+                console.log("created response:", error);
+                this._errorMessage = error.message;
+            }
         );;
     }
 
