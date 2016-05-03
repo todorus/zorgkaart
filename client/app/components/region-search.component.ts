@@ -88,7 +88,12 @@ export class RegionSearchComponent {
 
         this._regionService.fetch(query)
             .subscribe(
-                regions => this.regions = regions,
+                regions => {
+                    // the inputvalue could have changed in the meantime
+                    if (query == this._inputValue) {
+                        this.regions = regions;
+                    }
+                },
                 error => this.errorMessage = <any>error
             );
     }
