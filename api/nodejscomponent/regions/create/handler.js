@@ -17,12 +17,16 @@ module.exports.handler = function (event, context) {
   // console.log("event", event);
 
   if(event["children"] == null || event["children"] == undefined){
-    context.fail(new Error("must provide children ids"));
+    var fault = { message: 'must provide children ids' };
+    var error = new Error(JSON.stringify({ status: 'failure', fault: fault }));
+    context.fail(error);
     return;
   }
 
   if(event["name"] == null || event["name"] == undefined){
-    context.fail(new Error("must provide a name"));
+    var fault = { message: 'must provide a name' };
+    var error = new Error(JSON.stringify({ status: 'failure', fault: fault }));
+    context.fail(error);
     return;
   }
 
