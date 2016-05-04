@@ -10,22 +10,26 @@ import {Headers, RequestOptions} from "angular2/http";
     selector: 'region-form',
     directives: [RegionSearchComponent, RegionSelectionComponent],
     template: `
-    <form class="regionForm">
-        <h2>REGIO</h2>
-        <p class="error" [ngClass]="{hide: !(_errorMessage)}">{{_errorMessage}}</p>
-        <label>Naam*</label>
-        <input type="text" placeholder="naam" [(ngModel)]="model.name"/>
-        <label>Beschrijving</label>
-        <textarea placeholder="beschrijving" [(ngModel)]="model.description"></textarea>
-        <label>Gebied*</label>
-        <p>
-            Vul hier de postcodes, gemeentes of provincies in welke het gebied omvangt.
-        </p>
-        <region-search></region-search>
-        <region-selection></region-selection>
-        
-        <input type="submit" value="OPSLAAN" (click)="onSubmit()"/>
-    </form>
+    <div id="menu_container" class="side">
+      <div id="menu" class="side">
+        <form class="regionForm">
+            <h2>REGIO</h2>
+            <p class="error" [ngClass]="{hide: !(_errorMessage)}">{{_errorMessage}}</p>
+            <label>Naam*</label>
+            <input type="text" placeholder="naam" [(ngModel)]="model.name"/>
+            <label>Beschrijving</label>
+            <textarea placeholder="beschrijving" [(ngModel)]="model.description"></textarea>
+            <label>Gebied*</label>
+            <p>
+                Vul hier de postcodes, gemeentes of provincies in welke het gebied omvangt.
+            </p>
+            <region-search></region-search>
+            <region-selection></region-selection>
+            
+            <input type="submit" value="OPSLAAN" (click)="onSubmit()"/>
+        </form>
+      </div>
+    </div>
   `,
     styles: [`
         p, input {
