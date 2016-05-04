@@ -122,6 +122,18 @@ input[type=submit] {
 input[type=submit]:hover {
     background: #2D755F;
 }
+/*
+    NAV
+*/
+nav {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+nav img {
+    width: 80px;
+    height: auto;
+}
 
 /*
     MAP
@@ -134,20 +146,34 @@ input[type=submit]:hover {
 /*
     MENU
 */
-#side_menu_container {
+#side_menu_container, #center_menu_container {
     position: absolute;
     top: 0px;
     left: 0px;
     display: inline-block;
-    width: auto;
     height: 100%;
     padding: 20px;
 }
-#side_menu {
-    width: 450px;
-    height: 100%;
+#side_menu_container {
+    width: auto;
+}
+#center_menu_container {
+    padding-top: 50px;
+    width: 100%;
+}
+#center_menu, #side_menu {
     padding: 20px 50px 50px;
     background: #FFF;
-
     overflow: auto;
+
+    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.4);
+
+    width: 450px;
+}
+#center_menu {
+    margin-left: auto ;
+    margin-right: auto ;
+}
+#side_menu {
+    height: 100%;
 }
