@@ -10,8 +10,8 @@ import {Headers, RequestOptions} from "angular2/http";
     selector: 'region-form',
     directives: [RegionSearchComponent, RegionSelectionComponent],
     template: `
-    <div id="side_menu_container">
-      <div id="side_menu">
+    <div id="menu_container" class="side">
+      <div id="menu" class="side">
         <form class="regionForm">
             <h2>REGIO</h2>
             <p class="error" [ngClass]="{hide: !(_errorMessage)}">{{_errorMessage}}</p>

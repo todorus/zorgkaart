@@ -9,8 +9,8 @@ import {Headers, RequestOptions} from "angular2/http";
 @Component({
     selector: 'start',
     template: `
-    <div id="center_menu_container">
-      <div id="center_menu">
+    <div id="menu_container" class="center">
+      <div id="menu" class="center">
         <div>
             <h2>WELKOM</h2>
             <p>

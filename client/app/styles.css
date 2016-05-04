@@ -146,7 +146,7 @@ nav img {
 /*
     MENU
 */
-#side_menu_container, #center_menu_container {
+#menu_container {
     position: absolute;
     top: 0px;
     left: 0px;
@@ -154,14 +154,14 @@ nav img {
     height: 100%;
     padding: 20px;
 }
-#side_menu_container {
+#menu_container.side {
     width: auto;
 }
-#center_menu_container {
+#menu_container.center {
     padding-top: 50px;
     width: 100%;
 }
-#center_menu, #side_menu {
+#menu {
     padding: 20px 50px 50px;
     background: #FFF;
     overflow: auto;
@@ -170,10 +170,10 @@ nav img {
 
     width: 450px;
 }
-#center_menu {
+#menu.center {
     margin-left: auto ;
     margin-right: auto ;
 }
-#side_menu {
+#menu.side {
     height: 100%;
 }
