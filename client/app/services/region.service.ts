@@ -7,6 +7,8 @@ import {Subject} from "rxjs/Subject";
 @Injectable()
 export class RegionService {
 
+    editMode:boolean = false;
+
     private _regionsUrl = 'https://c0x7s177j4.execute-api.eu-west-1.amazonaws.com/development/regions';  // URL to web api
     private _mergeUrl = this._regionsUrl+'/merge';
 
@@ -53,11 +55,22 @@ export class RegionService {
             .catch(this.handleError)
     }
 
+    find(id:Number):Observable {
+        return this._http.get(this._regionsUrl+"/"+id, null)
+            .map(res => <Region> res.json())
+            .catch(this.handleError);
+    }
+
     private handleError(error:Response) {
         // in a real world app, we may send the error to some remote logging infrastructure
         // instead of just logging it to the console
         console.error(error);
         return Observable.throw(error.json().fault || error);
+    }
+
+    show(region:Region):void {
+        this._selectionStore = [region];
+        this._selectionSubject.next(this._selectionStore);
     }
 
     select(region:Region):void {
@@ -79,6 +92,11 @@ export class RegionService {
                 return;
             }
         }
+    }
+
+    clear():void {
+        this._selectionStore = [];
+        this._selectionSubject.next(this._selectionStore);
     }
 
     focus(region:Region):void {

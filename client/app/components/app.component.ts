@@ -13,6 +13,9 @@ import {RegionShowComponent} from "./region-show.component";
     <map></map>
     <router-outlet></router-outlet>
     <nav>
+      <a [routerLink]="['/RegionShow', {id: 8868}]">
+          NIJMEGEN
+      </a>
       <a [routerLink]="['/RegionCreate']">
           <img src="app/img/login_ic.svg" />
       </a>

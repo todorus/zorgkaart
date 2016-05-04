@@ -1,6 +1,7 @@
 import {Component, Input} from 'angular2/core';
 import {Region} from '../model/region';
 import {RegionService} from "../services/region.service";
+import {Router, RouteParams} from "angular2/router";
 
 @Component({
     selector: 'region-show',
@@ -20,15 +21,35 @@ import {RegionService} from "../services/region.service";
 })
 export class RegionShowComponent {
 
-    private region:Region;
     private regionService:RegionService;
 
-    constructor(private regionService:RegionService) {
+    private region:Region;
+    private id;
+
+    constructor(private regionService:RegionService, private params: RouteParams) {
         this.regionService = regionService;
+        this.regionService.editMode = false;
+
+        this.id = params.get('id');
+
+        this.region = new Region();
     }
 
+
     ngOnInit(){
-        console.log("RegionShowComponent init");
+        this.regionService.find(this.id)
+            .subscribe(
+                region => {
+                    if(region == null){
+                        console.error("no region with id "+this.id);
+                        return;
+                    }
+
+                    this.region = region;
+                    this.regionService.show(region);
+                },
+                error => console.error(error)
+            );
     }
 
 }

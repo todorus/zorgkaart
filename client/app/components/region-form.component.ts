@@ -52,6 +52,9 @@ export class RegionFormComponent {
             }
             this.model.children = ids;
         });
+
+        this._regionService.editMode = true;
+        this._regionService.clear();
     }
 
     onSubmit(){

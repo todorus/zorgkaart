@@ -34,7 +34,7 @@ import {RegionService} from "../services/region.service";
 })
 export class RegionSelectionComponent {
 
-    private _selection:Region[];
+    private _selection:Region[] = [];
     private _regionService;
 
     constructor(private _regionService:RegionService) {
