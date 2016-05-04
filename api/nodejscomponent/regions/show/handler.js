@@ -29,7 +29,7 @@ module.exports.handler = function (event, context) {
     [event.id]
   ).then(
     function (result) {
-      var response = Region.toJson(result[0].data);
+      var response = result.length > 0 ? Region.toJson(result[0].data) : null;
       context.succeed(response);
     }
   ).catch(function(error){
