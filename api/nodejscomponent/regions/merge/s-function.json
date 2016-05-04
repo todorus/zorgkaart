@@ -13,7 +13,7 @@
   },
   "endpoints": [
     {
-      "path": "regions/{id}",
+      "path": "regions/merge",
       "method": "GET",
       "type": "AWS",
       "authorizationType": "none",
@@ -21,9 +21,7 @@
       "apiKeyRequired": false,
       "requestParameters": {},
       "requestTemplates": {
-        "application/json": {
-          "id" : "$input.params('id')"
-        }
+        "application/json": ""
       },
       "responses": {
         "400": {
