@@ -60,7 +60,7 @@ module.exports = function (db, databaseName) {
         if (error) {
           deferred.reject(new Error(error));
         } else {
-          deferred.resolve(resultToRegions(result));
+          deferred.resolve(Region.resultToRegions(result));
         }
       }
     );
@@ -88,7 +88,7 @@ module.exports = function (db, databaseName) {
         if (error) {
           deferred.reject(new Error(error));
         } else {
-          deferred.resolve(resultToRegions(result));
+          deferred.resolve(Region.resultToRegions(result));
         }
       }
     );
@@ -186,7 +186,7 @@ module.exports = function (db, databaseName) {
         if (error) {
           deferred.reject(new Error(error));
         } else {
-          deferred.resolve(resultToRegions(result));
+          deferred.resolve(Region.resultToRegions(result));
         }
       });
 
@@ -215,12 +215,24 @@ module.exports = function (db, databaseName) {
         if (error) {
           deferred.reject(new Error(error));
         } else {
-          deferred.resolve(resultToRegions(result));
+          deferred.resolve(Region.resultToRegions(result));
         }
       });
 
 
     return deferred.promise;
+  };
+
+  Region.resultToRegions = function(result) {
+    var converted = [];
+    for (var i = 0; i < result.data.length; i++) {
+      var region = Region.build(result.data[i]);
+      if(region.data["area"]){
+        region.data["area"] = JSON.parse(region.data["area"]);
+      }
+      converted.push(region);
+    }
+    return converted;
   };
 
   Region.toJson = function (input) {
@@ -286,7 +298,7 @@ module.exports = function (db, databaseName) {
           if (error) {
             deferred.reject(new Error(error));
           } else {
-            deferred.resolve(resultToRegions(result));
+            deferred.resolve(Region.resultToRegions(result));
           }
         }
       );
@@ -359,18 +371,6 @@ module.exports = function (db, databaseName) {
     }
 
     return preFix + query + postFix;
-  }
-
-  function resultToRegions(result) {
-    var converted = [];
-    for (var i = 0; i < result.data.length; i++) {
-      var region = Region.build(result.data[i]);
-      if(region.data["area"]){
-        region.data["area"] = JSON.parse(region.data["area"]);
-      }
-      converted.push(region);
-    }
-    return converted;
   }
 
   return Region;

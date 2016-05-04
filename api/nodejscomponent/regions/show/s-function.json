@@ -1,19 +1,19 @@
 {
-  "name": "merge",
+  "name": "show",
   "runtime": "nodejs",
   "description": "Serverless Lambda function for project: zorgkaart",
   "customName": false,
   "customRole": false,
-  "handler": "regions/merge/handler.handler",
-  "timeout": 10,
-  "memorySize": 1536,
+  "handler": "handler.handler",
+  "timeout": 6,
+  "memorySize": 1024,
   "authorizer": {},
   "custom": {
     "excludePatterns": []
   },
   "endpoints": [
     {
-      "path": "regions/{id}",
+      "path": "/regions/show",
       "method": "GET",
       "type": "AWS",
       "authorizationType": "none",
@@ -21,44 +21,21 @@
       "apiKeyRequired": false,
       "requestParameters": {},
       "requestTemplates": {
-        "application/json": {
-          "id" : "$input.params('id')"
-        }
+        "application/json": ""
       },
       "responses": {
         "400": {
-          "statusCode": "400"
-        },
-        "default": {
-          "statusCode": "200",
+          "statusCode": "400",
           "responseParameters": {
             "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,Cache-Control'",
             "method.response.header.Access-Control-Allow-Methods": "'*'",
             "method.response.header.Access-Control-Allow-Origin": "'*'"
           },
+          "selectionPattern": "(.|\\n)*\\\"status\\\"\\:\\s*\\n*\\s*\\\"failure\\\"(.|\\n)*",
           "responseModels": {},
           "responseTemplates": {
-            "application/json": ""
+            "application/json": "#set($inputRoot = $input.path('$.errorMessage'))\n$inputRoot"
           }
-        }
-      }
-    },
-    {
-      "path": "regions/merge",
-      "method": "OPTIONS",
-      "type": "AWS",
-      "authorizationType": "none",
-      "authorizerFunction": false,
-      "apiKeyRequired": false,
-      "requestParameters": {},
-      "requestTemplates": {
-        "application/json": {
-          "regions" : "$input.params('regions')"
-        }
-      },
-      "responses": {
-        "400": {
-          "statusCode": "400"
         },
         "default": {
           "statusCode": "200",
