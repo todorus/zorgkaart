@@ -2,10 +2,10 @@ import {Component} from "angular2/core";
 import {RegionService} from "../services/region.service";
 import {HTTP_PROVIDERS} from "angular2/http";
 import {MapComponent} from "./map.component";
-import {RegionFormComponent} from "./region-form.component";
+import {RegionFormComponent} from "./regions/region-form.component";
 import {RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS} from "angular2/router";
 import {StartComponent} from "./start.component";
-import {RegionShowComponent} from "./region-show.component";
+import {RegionShowComponent} from "./regions/region-show.component";
 
 @Component({
   selector: 'my-app',
@@ -13,6 +13,9 @@ import {RegionShowComponent} from "./region-show.component";
     <map></map>
     <router-outlet></router-outlet>
     <nav>
+      <a [routerLink]="['/RegionShow', {id: 8868}]">
+          NIJMEGEN
+      </a>
       <a [routerLink]="['/RegionCreate']">
           <img src="app/img/login_ic.svg" />
       </a>
@@ -24,7 +27,7 @@ import {RegionShowComponent} from "./region-show.component";
 })
 @RouteConfig([
   {path: '/regions/:id', component: RegionShowComponent, as:"RegionShow"},
-  {path: '/regions', component: RegionFormComponent, as:"RegionCreate"},
+  {path: '/regions/create', component: RegionFormComponent, as:"RegionCreate"},
   {path: '/',       component: StartComponent,      as:"Start"}
 ])
 export class AppComponent { }

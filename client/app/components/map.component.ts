@@ -137,7 +137,10 @@ export class MapComponent {
         var feature =  e.layer.feature;
         var region = feature.region;
         var regionService = feature.regionService;
-        regionService.deselect(region);
+
+        if(regionService.editMode){
+            regionService.deselect(region);
+        }
     }
 
 }

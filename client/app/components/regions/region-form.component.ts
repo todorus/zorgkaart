@@ -1,7 +1,7 @@
 import {Component, Input} from 'angular2/core';
-import {Region} from '../model/region';
+import {Region} from '../../model/region';
 import {NgForm}    from 'angular2/common';
-import {RegionService} from "../services/region.service";
+import {RegionService} from "../../services/region.service";
 import {RegionSelectionComponent} from "./region-selection.component";
 import {RegionSearchComponent} from "./region-search.component";
 import {Headers, RequestOptions} from "angular2/http";
@@ -52,6 +52,9 @@ export class RegionFormComponent {
             }
             this.model.children = ids;
         });
+
+        this._regionService.editMode = true;
+        this._regionService.clear();
     }
 
     onSubmit(){

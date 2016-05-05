@@ -1,6 +1,6 @@
 import {Component, Input} from 'angular2/core';
-import {Region} from '../model/region';
-import {RegionService} from "../services/region.service";
+import {Region} from '../../model/region';
+import {RegionService} from "../../services/region.service";
 
 @Component({
     selector: 'region-selection',
@@ -34,7 +34,7 @@ import {RegionService} from "../services/region.service";
 })
 export class RegionSelectionComponent {
 
-    private _selection:Region[];
+    private _selection:Region[] = [];
     private _regionService;
 
     constructor(private _regionService:RegionService) {

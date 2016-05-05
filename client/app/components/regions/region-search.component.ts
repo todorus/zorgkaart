@@ -1,6 +1,6 @@
 import {Component, Input} from 'angular2/core';
-import {Region} from '../model/region';
-import {RegionService} from "../services/region.service";
+import {Region} from '../../model/region';
+import {RegionService} from "../../services/region.service";
 
 @Component({
     selector: 'region-search',
