@@ -2,8 +2,8 @@ import {Component, Input} from 'angular2/core';
 import {Region} from '../model/region';
 import {NgForm}    from 'angular2/common';
 import {RegionService} from "../services/region.service";
-import {RegionSelectionComponent} from "./region-selection.component";
-import {RegionSearchComponent} from "./region-search.component";
+import {RegionSelectionComponent} from "./regions/region-selection.component";
+import {RegionSearchComponent} from "./regions/region-search.component";
 import {Headers, RequestOptions} from "angular2/http";
 
 @Component({
