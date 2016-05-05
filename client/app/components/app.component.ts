@@ -6,6 +6,7 @@ import {RegionFormComponent} from "./regions/region-form.component";
 import {RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS} from "angular2/router";
 import {StartComponent} from "./start.component";
 import {RegionShowComponent} from "./regions/region-show.component";
+import {RegionOverviewComponent} from "./regions/region-overview.component";
 
 @Component({
   selector: 'my-app',
@@ -26,8 +27,9 @@ import {RegionShowComponent} from "./regions/region-show.component";
   providers: [RegionService, HTTP_PROVIDERS, ROUTER_PROVIDERS]
 })
 @RouteConfig([
-  {path: '/regions/:id', component: RegionShowComponent, as:"RegionShow"},
   {path: '/regions/create', component: RegionFormComponent, as:"RegionCreate"},
+  {path: '/regions/:id', component: RegionShowComponent, as:"RegionShow"},
+  {path: '/regions', component: RegionOverviewComponent, as:"RegionOverview"},
   {path: '/',       component: StartComponent,      as:"Start"}
 ])
 export class AppComponent { }

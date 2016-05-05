@@ -26,10 +26,16 @@ export class RegionService {
     constructor(private _http:Http) {
     }
 
-    fetch(query:string):Observable {
+    fetch(query:string, limit:Number, page:Number):Observable {
         let params:URLSearchParams = new URLSearchParams();
-        params.set('query', query);
-        params.set('limit', '3');
+        if(query) {
+            params.set('query', query);
+        }
+
+        limit = limit >= 1 ? limit : 3;
+        params.set('limit', limit.toString());
+
+        page = page >= 0 ? page : 0;
 
         return this._http.get(this._regionsUrl, {search: params})
             .map(res => <Region[]> res.json())

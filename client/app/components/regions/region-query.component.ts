@@ -1,37 +1,23 @@
-import {Component, Input} from 'angular2/core';
+import {Component, Input, Output, EventEmitter} from 'angular2/core';
 import {Region} from '../../model/region';
 import {RegionService} from "../../services/region.service";
 import {RegionListComponent} from "./region-list.component";
-import {RegionQueryComponent} from "./region-query.component";
 
 @Component({
-    selector: 'region-search',
-    directives: [RegionListComponent, RegionQueryComponent],
+    selector: 'region-query',
     template: `
-    <region-query (result)="onResult(regions=$event.regions)"></region-query>
-    <region-list [regions]="regions"></region-list>
+    <input class="regionquery" placeholder="gemeentes, postcodes, zorgregios"
+     #query [value]="_inputValue" (keyup)="onKey($event, query.value)"/>
   `,
     styles: [
         `
         input.regionquery {
             width: 100%;
         }
-        ul.regions {
-            width: 100%;
-        }
-        ul.regions li {
-            border-top: none;
-            cursor: pointer;
-        }
-        ul.regions li:hover, ul.regions li.focus {
-            color: #FFF;
-            border: 1px solid #35886F;
-            background: #43AA8B;
-        }
     `
     ]
 })
-export class RegionSearchComponent {
+export class RegionQueryComponent {
 
     private KEYCODE_ENTER:number = 13;
     private KEYCODE_UP:number = 38;
@@ -41,14 +27,16 @@ export class RegionSearchComponent {
 
     private _inputValue:string = '';
     private _focusIndex = -1;
-    regions:Region[] = [];
+
+    @Input()
+    maxResults = 3;
+
+    @Output()
+    result:EventEmitter<{regions: Region[]}> = new EventEmitter();
+    resultStore:Region[];
 
 
     constructor(private _regionService:RegionService) {
-    }
-
-    onResult(result){
-        console.log("result", result);
     }
 
     private onKey(event:KeyboardEvent, query:string):void {
@@ -77,16 +65,19 @@ export class RegionSearchComponent {
 
         this._inputValue = query;
         if (query == null || query.length < 2) {
-            this.regions = [];
+            this.resultStore = [];
             return;
         }
 
-        this._regionService.fetch(query, 3, 0)
+        console.log("maxResults", this.maxResults);
+
+        this._regionService.fetch(query, this.maxResults, 0)
             .subscribe(
                 regions => {
                     // the inputvalue could have changed in the meantime
                     if (query == this._inputValue) {
-                        this.regions = regions;
+                        this.resultStore = regions;
+                        this.result.next({regions: this.resultStore});
                     }
                 },
                 error => this.errorMessage = <any>error
@@ -100,8 +91,8 @@ export class RegionSearchComponent {
 
     private onEnter() {
         let focusIndex = Math.max(0, this._focusIndex);
-        if (this.regions.length > focusIndex) {
-            this.select(this.regions[focusIndex]);
+        if (this.resultStore.length > focusIndex) {
+            this.select(this.resultStore[focusIndex]);
         }
     }
 
@@ -109,16 +100,16 @@ export class RegionSearchComponent {
         if (this._focusIndex < 0) {
             this._focusIndex = -1;
         } else {
-            this._focusIndex = Math.min(this._focusIndex, this.regions.length - 1);
+            this._focusIndex = Math.min(this._focusIndex, this.resultStore.length - 1);
         }
 
-        for (let i:number = 0; i < this.regions.length; i++) {
-            this.regions[i].focused = i == this._focusIndex;
+        for (let i:number = 0; i < this.resultStore.length; i++) {
+            this.resultStore[i].focused = i == this._focusIndex;
         }
     }
 
     private clear():void {
-        this.regions = [];
+        this.resultStore = [];
         this._inputValue = '';
         this._focusIndex = -1;
     }
