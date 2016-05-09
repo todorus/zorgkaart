@@ -16,12 +16,16 @@ describe("/regions", function () {
               {area: {properties: {name: 'Maastricht'}, geometry: [[1,1]]}, name: 'Maastricht', type: Region.TYPE_PLACE},
               {area: {properties: {name: 'Maasdamn'}, geometry: [[2,1]]}, name: 'Maasdamn', type: Region.TYPE_PLACE},
               {area: {properties: {name: 'bijdeMaas'}, geometry: [[3,1]]}, name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
+
               {area: {properties: {name: 'blub'}, geometry: [[4,1]]}, name: 'blub', type: Region.TYPE_MUNICIPALITY},
               {area: {properties: {name: 'blob'}, geometry: [[5,1]]}, name: 'blob', type: Region.TYPE_MUNICIPALITY},
               {area: {properties: {name: 'Maasland'}, geometry: [[6,1]]}, name: 'Maasland', type: Region.TYPE_MUNICIPALITY},
+
               {area: {properties: {name: 'Overblaak'}, geometry: [[7,1]]}, name: 'Overblaak', type: Region.TYPE_PLACE},
               {area: {properties: {name: 'Ossdam'}, geometry: [[8,1]]}, name: 'Ossdam', type: Region.TYPE_PLACE},
-              {area: {properties: {name: 'Oss'}, geometry: [[9,1]]}, name: 'Oss', type: Region.TYPE_PLACE}
+              {area: {properties: {name: 'Oss'}, geometry: [[9,1]]}, name: 'Oss', type: Region.TYPE_PLACE},
+
+              {area: {properties: {name: 'blib'}, geometry: [[10,1]]}, name: 'blib', type: Region.TYPE_MUNICIPALITY}
             ]
           );
         }
@@ -40,27 +44,40 @@ describe("/regions", function () {
   describe("/all", function () {
 
     var event = {
-    }
+    };
 
-    var matchingRegions = [
-      {area: {properties: {name: 'bijdeMaas'}, geometry: [[3,1]]}, name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
-      {area: {properties: {name: 'blob'}, geometry: [[5,1]]}, name: 'blob', type: Region.TYPE_MUNICIPALITY},
-      {area: {properties: {name: 'blub'}, geometry: [[4,1]]}, name: 'blub', type: Region.TYPE_MUNICIPALITY},
-      {area: {properties: {name: 'Maasdamn'}, geometry: [[2,1]]}, name: 'Maasdamn', type: Region.TYPE_PLACE},
-      {area: {properties: {name: 'Maasland'}, geometry: [[6,1]]}, name: 'Maasland', type: Region.TYPE_MUNICIPALITY},
-      {area: {properties: {name: 'Maastricht'}, geometry: [[1,1]]}, name: 'Maastricht', type: Region.TYPE_PLACE},
-      {area: {properties: {name: 'Oss'}, geometry: [[9,1]]}, name: 'Oss', type: Region.TYPE_PLACE},
-      {area: {properties: {name: 'Ossdam'}, geometry: [[8,1]]}, name: 'Ossdam', type: Region.TYPE_PLACE},
-      {area: {properties: {name: 'Overblaak'}, geometry: [[7,1]]}, name: 'Overblaak', type: Region.TYPE_PLACE},
-    ]
+    var matchingResult = {
+      pages: {
+        current: 0,
+        total: 1
+      },
+      data: [
+        {area: {properties: {name: 'bijdeMaas'}, geometry: [[3,1]]}, name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
+        {area: {properties: {name: 'blib'}, geometry: [[10,1]]}, name: 'blib', type: Region.TYPE_MUNICIPALITY},
+        {area: {properties: {name: 'blob'}, geometry: [[5,1]]}, name: 'blob', type: Region.TYPE_MUNICIPALITY},
+        {area: {properties: {name: 'blub'}, geometry: [[4,1]]}, name: 'blub', type: Region.TYPE_MUNICIPALITY},
+        {area: {properties: {name: 'Maasdamn'}, geometry: [[2,1]]}, name: 'Maasdamn', type: Region.TYPE_PLACE},
+        {area: {properties: {name: 'Maasland'}, geometry: [[6,1]]}, name: 'Maasland', type: Region.TYPE_MUNICIPALITY},
+        {area: {properties: {name: 'Maastricht'}, geometry: [[1,1]]}, name: 'Maastricht', type: Region.TYPE_PLACE},
+        {area: {properties: {name: 'Oss'}, geometry: [[9,1]]}, name: 'Oss', type: Region.TYPE_PLACE},
+        {area: {properties: {name: 'Ossdam'}, geometry: [[8,1]]}, name: 'Ossdam', type: Region.TYPE_PLACE},
+        {area: {properties: {name: 'Overblaak'}, geometry: [[7,1]]}, name: 'Overblaak', type: Region.TYPE_PLACE}
+      ]
+    };
 
     it("should return a list of all Regions ordered by name", function (done) {
       var context = new MockContext()
       context.then(
         function (context) {
-          filterIds(context.response);
 
-          expect(context.response).toEqual(matchingRegions);
+          if(context.error != null){
+            done(error);
+            return;
+          }
+
+          filterIds(context.response.data);
+
+          expect(context.response).toEqual(matchingResult);
 
           done();
         }
@@ -82,21 +99,32 @@ describe("/regions", function () {
       it("should return a list of the results ordered by length", function (done) {
         var event = {
           query: "oss"
-        }
+        };
 
-        var matchingRegions = [
-          {area: {properties: {name: 'Oss'}, geometry: [[9,1]]}, name: 'Oss', type: Region.TYPE_PLACE},
-          {area: {properties: {name: 'Ossdam'}, geometry: [[8,1]]}, name: 'Ossdam', type: Region.TYPE_PLACE}
-        ]
+        var matchingResult = {
+          pages: {
+            current: 0,
+            total: 1
+          },
+          data: [
+            {area: {properties: {name: 'Oss'}, geometry: [[9,1]]}, name: 'Oss', type: Region.TYPE_PLACE},
+            {area: {properties: {name: 'Ossdam'}, geometry: [[8,1]]}, name: 'Ossdam', type: Region.TYPE_PLACE}
+          ]
+        };
 
         var context = new MockContext()
         context.then(
           function (context) {
 
-            filterIds(context.response);
+            if(context.error != null){
+              done(error);
+              return;
+            }
+
+            filterIds(context.response.data);
 
             expect(context.error).toBe(null);
-            expect(context.response).toEqual(matchingRegions);
+            expect(context.response).toEqual(matchingResult);
 
             done();
           }
@@ -114,20 +142,31 @@ describe("/regions", function () {
           query: "maas"
         }
 
-        var matchingRegions = [
-          {area: {properties: {name: 'Maasdamn'}, geometry: [[2,1]]}, name: 'Maasdamn', type: Region.TYPE_PLACE},
-          {area: {properties: {name: 'Maasland'}, geometry: [[6,1]]}, name: 'Maasland', type: Region.TYPE_MUNICIPALITY},
-          {area: {properties: {name: 'Maastricht'}, geometry: [[1,1]]}, name: 'Maastricht', type: Region.TYPE_PLACE},
-        ]
+        var matchingResult = {
+          pages: {
+            current: 0,
+            total: 1
+          },
+          data: [
+            {area: {properties: {name: 'Maasdamn'}, geometry: [[2,1]]}, name: 'Maasdamn', type: Region.TYPE_PLACE},
+            {area: {properties: {name: 'Maasland'}, geometry: [[6,1]]}, name: 'Maasland', type: Region.TYPE_MUNICIPALITY},
+            {area: {properties: {name: 'Maastricht'}, geometry: [[1,1]]}, name: 'Maastricht', type: Region.TYPE_PLACE}
+          ]
+        }
 
         var context = new MockContext()
         context.then(
           function (context) {
 
-            filterIds(context.response);
+            if(context.error != null){
+              done(error);
+              return;
+            }
+
+            filterIds(context.response.data);
 
             expect(context.error).toBe(null);
-            expect(context.response).toEqual(matchingRegions);
+            expect(context.response).toEqual(matchingResult);
 
             done();
           }
@@ -148,17 +187,29 @@ describe("/regions", function () {
         query: "qii"
       }
 
-      var matchingRegions = []
+      var matchingResult = {
+        pages: {
+          current: 0,
+          total: 1
+        },
+        data: [
+        ]
+      }
 
       it("should return an empty list", function (done) {
         var context = new MockContext()
         context.then(
           function (context) {
 
-            filterIds(context.response);
+            if(context.error != null){
+              done(error);
+              return;
+            }
+
+            filterIds(context.response.data);
 
             expect(context.error).toBe(null);
-            expect(context.response).toEqual(matchingRegions);
+            expect(context.response).toEqual(matchingResult);
 
             done();
           }
@@ -181,22 +232,33 @@ describe("/regions", function () {
 
       var event = {
         limit: 2
-      }
+      };
 
-      var matchingRegions = [
-        {area: {properties: {name: 'bijdeMaas'}, geometry: [[3,1]]}, name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
-        {area: {properties: {name: 'blob'}, geometry: [[5,1]]}, name: 'blob', type: Region.TYPE_MUNICIPALITY},
-      ]
+      var matchingResult = {
+        pages: {
+          current: 0,
+          total: 5
+        },
+        data: [
+          {area: {properties: {name: 'bijdeMaas'}, geometry: [[3,1]]}, name: 'bijdeMaas', type: Region.TYPE_MUNICIPALITY},
+          {area: {properties: {name: 'blib'}, geometry: [[10,1]]}, name: 'blib', type: Region.TYPE_MUNICIPALITY}
+        ]
+      };
 
       it("should return a list of the first n Regions ordered by name", function (done) {
         var context = new MockContext()
         context.then(
           function (context) {
 
-            filterIds(context.response);
+            if(context.error != null){
+              done(error);
+              return;
+            }
+
+            filterIds(context.response.data);
 
             expect(context.error).toBe(null);
-            expect(context.response).toEqual(matchingRegions);
+            expect(context.response).toEqual(matchingResult);
 
             done();
           }
@@ -219,20 +281,31 @@ describe("/regions", function () {
         page: 1
       }
 
-      var matchingRegions = [
-        {area: {properties: {name: 'blub'}, geometry: [[4,1]]}, name: 'blub', type: Region.TYPE_MUNICIPALITY},
-        {area: {properties: {name: 'Maasdamn'}, geometry: [[2,1]]}, name: 'Maasdamn', type: Region.TYPE_PLACE}
-      ];
+      var matchingResult = {
+        pages: {
+          current: 1,
+          total: 5
+        },
+        data: [
+          {area: {properties: {name: 'blob'}, geometry: [[5,1]]}, name: 'blob', type: Region.TYPE_MUNICIPALITY},
+          {area: {properties: {name: 'blub'}, geometry: [[4,1]]}, name: 'blub', type: Region.TYPE_MUNICIPALITY}
+        ]
+      };
 
       it("should return a list of n Regions ordered by name starting from the supplied page", function (done) {
         var context = new MockContext()
         context.then(
           function (context) {
 
-            filterIds(context.response);
+            if(context.error != null){
+              done(error);
+              return;
+            }
+
+            filterIds(context.response.data);
 
             expect(context.error).toBe(null);
-            expect(context.response).toEqual(matchingRegions);
+            expect(context.response).toEqual(matchingResult);
 
             done();
           }
@@ -255,20 +328,31 @@ describe("/regions", function () {
       limit: 2
     };
 
-    var matchingRegions = [
-      {area: {properties: {name: 'Maasdamn'}, geometry: [[2,1]]}, name: 'Maasdamn', type: Region.TYPE_PLACE},
-      {area: {properties: {name: 'Maasland'}, geometry: [[6,1]]}, name: 'Maasland', type: Region.TYPE_MUNICIPALITY}
-    ];
+    var matchingResult = {
+      pages: {
+        current: 0,
+        total: 2
+      },
+      data: [
+        {area: {properties: {name: 'Maasdamn'}, geometry: [[2,1]]}, name: 'Maasdamn', type: Region.TYPE_PLACE},
+        {area: {properties: {name: 'Maasland'}, geometry: [[6,1]]}, name: 'Maasland', type: Region.TYPE_MUNICIPALITY}
+      ]
+    };
 
     it("should return a list of n Regions ordered by name", function (done) {
       var context = new MockContext()
       context.then(
         function (context) {
 
-          filterIds(context.response);
+          if(context.error != null){
+            done(error);
+            return;
+          }
+
+          filterIds(context.response.data);
 
           expect(context.error).toBe(null);
-          expect(context.response).toEqual(matchingRegions);
+          expect(context.response).toEqual(matchingResult);
 
           done();
         }

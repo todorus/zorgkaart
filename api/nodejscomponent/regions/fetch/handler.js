@@ -18,25 +18,41 @@ var Region = db["Region"];
 module.exports.handler = function (event, context) {
 
   var query = event.query;
-  var offset = 0;
+
   var limit = 10;
+  var page = 0;
   if (event.limit != undefined && event.limit != null) {
-    limit = event.limit;
+    limit = event.limit > 0 ? event.limit : limit;
 
     if(event.page != undefined && event.page != null) {
-      offset = event.page * limit;
+      page = event.page >= 0 ? event.page : 0;
     }
   }
 
-
+  var offset = page * limit;
+  var data =[];
 
   Region.search(
     query, limit, offset
   ).then(
-    function (result) {
-      var response = Region.toJson(result.data);
+    function(result){
+      data = result.data;
+      return Region.count(query);
+    }
+  ).then(
+    function (count) {
+      var total = count > 0 ? Math.ceil(count / limit) : 1;
+
+      var response = {
+        pages: {
+          current: page,
+          total: total
+        },
+        data: Region.toJson(data)
+      };
       context.succeed(response);
-    },
+    }
+  ).catch(
     function (error) {
       context.fail(error);
     }

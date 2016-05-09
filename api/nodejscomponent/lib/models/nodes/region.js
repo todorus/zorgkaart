@@ -27,11 +27,17 @@ module.exports = function (db, databaseName) {
     return instance.save()
   };
 
-  Region.count = function(){
+  Region.count = function(name){
     var deferred = Q.defer();
 
+    var whereClause = name != null && name != undefined ? "WHERE n.name =~ '(?i)" + name + ".*' " : "";
+
+    var query = "MATCH (n" + buildLabels(null) + ") " +
+      whereClause +
+      "RETURN COUNT(n)";
+
     Region.db.cypherQuery(
-      "MATCH (n:Region) RETURN COUNT(n)",
+      query,
       function (error, result) {
         if (error) {
           deferred.reject(new Error(error));
@@ -145,7 +151,7 @@ module.exports = function (db, databaseName) {
 
     var whereClause = name != null && name != undefined ? "WHERE n.name =~ '(?i)" + name + ".*' " : "";
 
-    var query = "MATCH (n" + buildLabels(null) + ") " +
+    var queryData = "MATCH (n" + buildLabels(null) + ") " +
       whereClause +
       "RETURN n " +
       "ORDER BY LOWER(n.name), length(n.name) ASC " +
@@ -153,7 +159,7 @@ module.exports = function (db, databaseName) {
       "LIMIT " + limit;
 
     db.cypherQuery(
-      query,
+      queryData,
       function (error, result) {
         if (error) {
           deferred.reject(new Error(error));
