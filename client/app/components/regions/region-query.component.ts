@@ -76,7 +76,7 @@ export class RegionQueryComponent {
                 regions => {
                     // the inputvalue could have changed in the meantime
                     if (query == this._inputValue) {
-                        this.resultStore = regions;
+                        this.resultStore = regions.data;
                         this.result.next({regions: this.resultStore});
                     }
                 },

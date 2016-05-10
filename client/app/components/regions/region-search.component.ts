@@ -83,10 +83,10 @@ export class RegionSearchComponent {
 
         this._regionService.fetch(query, 3, 0)
             .subscribe(
-                regions => {
+                result => {
                     // the inputvalue could have changed in the meantime
                     if (query == this._inputValue) {
-                        this.regions = regions;
+                        this.regions = result.data;
                     }
                 },
                 error => this.errorMessage = <any>error

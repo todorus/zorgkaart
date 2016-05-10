@@ -3,15 +3,18 @@ import {Region} from '../../model/region';
 import {RegionService} from "../../services/region.service";
 import {RegionListComponent} from "./region-list.component";
 import {RegionQueryComponent} from "./region-query.component";
+import {PaginationComponent} from "../pagination-component";
+import {Pagination} from "../../model/Pagination";
 
 @Component({
     selector: 'region-overview',
-    directives: [RegionQueryComponent, RegionListComponent],
+    directives: [RegionQueryComponent, RegionListComponent, PaginationComponent],
     template: `
     <div id="menu_container" class="side">
       <div id="menu" class="side">
-        <region-query [maxResults]="10" (result)="regions=$event.regions"></region-query>
+        <region-query [maxResults]="10" (result)="onResult($event)"></region-query>
         <region-list [regions]="regions"></region-list>
+        <pagination [pagination]="pagination"></pagination>
       </div>
     </div>
   `,
@@ -25,6 +28,7 @@ export class RegionOverviewComponent {
 
     private regionService;
     regions:Region[];
+    pagination:Pagination;
 
     constructor(private regionService:RegionService) {
         this.regionService = regionService;
@@ -34,14 +38,22 @@ export class RegionOverviewComponent {
     }
     
     ngOnInit(){
-        console.log("init")
         this.regionService.fetch(null, 10, 0)
             .subscribe(
-                regions =>  {
-                    console.log("fetched", regions);
-                    this.regions = regions
+                result =>  {
+                    console.log("fetched", result);
+                    this.onResult(result);
                 }
             )
+    }
+
+    onResult(result){
+        this.pagination = result.pages;
+        this.regions = result.data;
+    }
+
+    getPage():void {
+
     }
 
 
