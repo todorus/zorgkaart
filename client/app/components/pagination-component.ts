@@ -41,14 +41,10 @@ export class PagesPipe implements PipeTransform {
             return [];
         }
 
-        console.log("PaginationPipe", value, args);
-
         var pagenationItems:PaginationItem[] = [];
         for(var i:Number = 1; i <= value.total ; i ++){
-            pagenationItems.push(new PaginationItem(i, i == value.current))
+            pagenationItems.push(new PaginationItem(i, i == value.current + 1))
         }
-
-        console.log("PaginationPipe.paginationItems", pagenationItems);
 
         return pagenationItems;
     }
