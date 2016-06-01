@@ -25,7 +25,8 @@ module.exports.handler = function (event, context) {
     limit = event.limit > 0 ? event.limit : limit;
 
     if(event.page != undefined && event.page != null) {
-      page = event.page >= 0 ? event.page : 0;
+      var eventPage = parseInt(event.page);
+      page = eventPage >= 0 ? eventPage : page;
     }
   }
 
