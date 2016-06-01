@@ -4,26 +4,53 @@ import {Pagination, PaginationItem} from "../model/Pagination";
 @Component({
     selector: 'pagination',
     template: `
-    <h3>paging</h3>
     <ul class="pagination">
-        <li *ngFor="#item of pagination.items" (click)="select(item)">
-            page {{item.page}}
+        <li *ngFor="#item of items" (click)="select(item)" [class.selected]="item.selected">
+            {{item.page}}
         </li>
     </ul>
   `,
     styles: [`
         p, input {
             margin: 0;
-        }    
+        }
+        
+        ul.pagination {
+            display: flex;
+            justify-content: center;
+        }
+        ul.pagination li {
+            display: inline-block;
+            cursor: pointer;
+            
+            width: auto;
+            min-width: 38px;
+            
+            border: solid 1px #CED1D2;
+            
+            text-align: center;
+        }
+        ul.pagination li:hover {
+            color: #FFF;
+            border: 1px solid #35886F;
+            background: #43AA8B;
+        }
+        ul.pagination li.selected, ul.pagination li.selected:hover {
+            background: #2D755F;
+            border: solid 1px #FFF;
+            color: #FFF;
+            
+            cursor: default;
+        }
     `]
 })
 export class PaginationComponent {
 
     @Input("pagination")
-    pagination:Pagination;
+    items:PaginationItem[];
 
     ngOnInit(){
-        this.pagination = new Pagination();
+        this.items = [];
     }
 
     select(item:PaginationItem):void {
