@@ -3,7 +3,7 @@ import {Region} from '../../model/region';
 import {RegionService} from "../../services/region.service";
 import {RegionListComponent} from "./region-list.component";
 import {RegionQueryComponent} from "./region-query.component";
-import {PaginationComponent} from "../pagination-component";
+import {PaginationComponent, PagesPipe} from "../pagination-component";
 import {Pagination} from "../../model/Pagination";
 
 @Component({
@@ -14,7 +14,7 @@ import {Pagination} from "../../model/Pagination";
       <div id="menu" class="side">
         <region-query [maxResults]="10" (result)="onResult($event)"></region-query>
         <region-list [regions]="regions"></region-list>
-        <pagination [pagination]="pagination"></pagination>
+        <pagination [pagination]="pagination | pages"></pagination>
       </div>
     </div>
   `,
@@ -22,7 +22,8 @@ import {Pagination} from "../../model/Pagination";
         p, input {
             margin: 0;
         }    
-    `]
+    `],
+    pipes: [PagesPipe]
 })
 export class RegionOverviewComponent {
 

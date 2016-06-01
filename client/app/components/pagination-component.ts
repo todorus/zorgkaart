@@ -1,4 +1,4 @@
-import {Component, Input} from 'angular2/core';
+import {Component, Input, PipeTransform, Pipe} from 'angular2/core';
 import {Pagination, PaginationItem} from "../model/Pagination";
 
 @Component({
@@ -28,6 +28,29 @@ export class PaginationComponent {
 
     select(item:PaginationItem):void {
         console.log("paginationItem", item);
+    }
+
+}
+
+@Pipe({name: 'pages'})
+export class PagesPipe implements PipeTransform {
+
+    transform(value:any, args:any[]):any {
+
+        if(!value){
+            return [];
+        }
+
+        console.log("PaginationPipe", value, args);
+
+        var pagenationItems:PaginationItem[] = [];
+        for(var i:Number = 1; i <= value.total ; i ++){
+            pagenationItems.push(new PaginationItem(i, i == value.current))
+        }
+
+        console.log("PaginationPipe.paginationItems", pagenationItems);
+
+        return pagenationItems;
     }
 
 }
