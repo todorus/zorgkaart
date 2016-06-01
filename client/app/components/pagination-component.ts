@@ -35,15 +35,32 @@ export class PaginationComponent {
 @Pipe({name: 'pages'})
 export class PagesPipe implements PipeTransform {
 
-    transform(value:any, args:any[]):any {
+     private static MAX_RANGE = 5;
+
+    transform(value:any, args:any[]):PaginationItem[] {
 
         if(!value){
             return [];
         }
 
+        let halfRange = 0.5 * PagesPipe.MAX_RANGE;
+        var bottom:Number;
+        var top:Number;
+
         var pagenationItems:PaginationItem[] = [];
-        for(var i:Number = 1; i <= value.total ; i ++){
-            pagenationItems.push(new PaginationItem(i, i == value.current + 1))
+        var current = value.current + 1;
+
+        if(current < halfRange) {
+            bottom = 1;
+            top = PagesPipe.MAX_RANGE;
+        } else {
+            bottom = current - halfRange;
+            top = current + halfRange;
+        }
+        top = Math.min(value.total, top);
+
+        for (var i:Number = bottom; i <= top; i++) {
+            pagenationItems.push(new PaginationItem(i, i == current))
         }
 
         return pagenationItems;
