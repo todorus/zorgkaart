@@ -42,13 +42,13 @@ export class RegionOverviewComponent {
         this.regionService.fetch(null, 10, 0)
             .subscribe(
                 result =>  {
-                    console.log("fetched", result);
                     this.onResult(result);
                 }
             )
     }
 
     onResult(result){
+        console.log("onResult", result);
         this.pagination = result.pages;
         this.regions = result.data;
     }

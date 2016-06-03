@@ -8,7 +8,7 @@ import {RegionQueryComponent} from "./region-query.component";
     selector: 'region-search',
     directives: [RegionListComponent, RegionQueryComponent],
     template: `
-    <region-query (result)="onResult(regions=$event.regions)"></region-query>
+    <region-query (result)="onResult(regions=$event.data)"></region-query>
     <region-list [regions]="regions"></region-list>
   `,
     styles: [

@@ -73,11 +73,12 @@ export class RegionQueryComponent {
 
         this._regionService.fetch(query, this.maxResults, 0)
             .subscribe(
-                regions => {
+                result => {
                     // the inputvalue could have changed in the meantime
                     if (query == this._inputValue) {
-                        this.resultStore = regions.data;
-                        this.result.next({regions: this.resultStore});
+                        this.resultStore = result;
+                        console.log("resultStore", this.resultStore);
+                        this.result.next(this.resultStore);
                     }
                 },
                 error => this.errorMessage = <any>error
