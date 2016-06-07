@@ -37,6 +37,7 @@ export class RegionService {
         params.set('limit', limit.toString());
 
         page = page >= 0 ? page : 0;
+        params.set('page', page.toString());
 
         return this._http.get(this._regionsUrl, {search: params})
             .map(res => <RegionResult> res.json())

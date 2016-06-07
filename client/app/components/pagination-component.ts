@@ -1,4 +1,4 @@
-import {Component, Input, PipeTransform, Pipe} from 'angular2/core';
+import {Component, Input, PipeTransform, Pipe, Output, EventEmitter} from 'angular2/core';
 import {Pagination, PaginationItem} from "../model/Pagination";
 
 @Component({
@@ -48,13 +48,16 @@ export class PaginationComponent {
 
     @Input("pagination")
     items:PaginationItem[];
+    
+    @Output("page")
+    page:EventEmitter<Number> = new EventEmitter();
 
     ngOnInit(){
         this.items = [];
     }
 
     select(item:PaginationItem):void {
-        console.log("paginationItem", item);
+        this.page.next(item.page);
     }
 
 }
@@ -70,7 +73,7 @@ export class PagesPipe implements PipeTransform {
             return [];
         }
 
-        let halfRange = 0.5 * PagesPipe.MAX_RANGE;
+        let halfRange = Math.ceil(0.5 * PagesPipe.MAX_RANGE);
         var bottom:Number;
         var top:Number;
 
@@ -84,6 +87,7 @@ export class PagesPipe implements PipeTransform {
             bottom = current - halfRange;
             top = current + halfRange;
         }
+        bottom = Math.max(1, bottom);
         top = Math.min(value.total, top);
 
         for (var i:Number = bottom; i <= top; i++) {

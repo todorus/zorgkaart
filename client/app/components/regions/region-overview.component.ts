@@ -14,7 +14,7 @@ import {Pagination} from "../../model/Pagination";
       <div id="menu" class="side">
         <region-query (query)="onQuery($event)"></region-query>
         <region-list [regions]="regions"></region-list>
-        <pagination [pagination]="pagination | pages"></pagination>
+        <pagination [pagination]="pagination | pages" (page)="onPage($event)"></pagination>
       </div>
     </div>
   `,
@@ -31,7 +31,8 @@ export class RegionOverviewComponent {
     regions:Region[];
     pagination:Pagination;
 
-    private lastQuery:string;
+    private currentQuery:string;
+    private currentPage:Number = 1;
 
     constructor(private regionService:RegionService) {
         this.regionService = regionService;
@@ -50,13 +51,23 @@ export class RegionOverviewComponent {
     }
 
     onQuery(query){
+        this.currentQuery = query;
+        this.currentPage = 1;
+        this.search(this.currentQuery, this.currentPage);
+    }
 
-        this.lastQuery = query;
-        this.regionService.fetch(query, 10, 0)
+    onPage(page:Number){
+        console.log("onPage", page);
+        this.currentPage = page;
+        this.search(this.currentQuery, this.currentPage);
+    }
+
+    search(query:string, page:number){
+        this.regionService.fetch(query, 10, page - 1)
             .subscribe(
                 result => {
                     // the inputvalue could have changed in the meantime
-                    if (query == this.lastQuery) {
+                    if (query == this.currentQuery && page == this.currentPage) {
                         this.onResult(result);
                     }
                 },
@@ -70,10 +81,5 @@ export class RegionOverviewComponent {
         this.pagination = result.pages;
         this.regions = result.data;
     }
-
-    getPage():void {
-
-    }
-
 
 }
