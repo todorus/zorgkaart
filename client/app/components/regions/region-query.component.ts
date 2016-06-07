@@ -30,6 +30,9 @@ export class RegionQueryComponent {
 
     @Input()
     maxResults = 3;
+    
+    @Output("query")
+    query:EventEmitter<String> = new EventEmitter();
 
     @Output()
     result:EventEmitter<{regions: Region[]}> = new EventEmitter();
@@ -58,31 +61,31 @@ export class RegionQueryComponent {
         }
     }
 
-    private search(query:string) {
-        if (query == this._inputValue) {
+    private search(input:string) {
+        if (input == this._inputValue) {
             return;
         }
 
-        this._inputValue = query;
-        if (query == null || query.length < 2) {
-            this.resultStore = [];
+        this._inputValue = input;
+        if (input == null || input.length < 2) {
+            this.query.next(null);
             return;
         }
+        
+        this.query.next(input);
 
-        console.log("maxResults", this.maxResults);
-
-        this._regionService.fetch(query, this.maxResults, 0)
-            .subscribe(
-                result => {
-                    // the inputvalue could have changed in the meantime
-                    if (query == this._inputValue) {
-                        this.resultStore = result;
-                        console.log("resultStore", this.resultStore);
-                        this.result.next(this.resultStore);
-                    }
-                },
-                error => this.errorMessage = <any>error
-            );
+        // this._regionService.fetch(input, this.maxResults, 0)
+        //     .subscribe(
+        //         result => {
+        //             // the inputvalue could have changed in the meantime
+        //             if (input == this._inputValue) {
+        //                 this.resultStore = result;
+        //                 console.log("resultStore", this.resultStore);
+        //                 this.result.next(this.resultStore);
+        //             }
+        //         },
+        //         error => this.errorMessage = <any>error
+        //     );
     }
 
     private select(region:Region) {

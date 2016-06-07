@@ -12,7 +12,7 @@ import {Pagination} from "../../model/Pagination";
     template: `
     <div id="menu_container" class="side">
       <div id="menu" class="side">
-        <region-query [maxResults]="10" (result)="onResult($event)"></region-query>
+        <region-query (query)="onQuery($event)"></region-query>
         <region-list [regions]="regions"></region-list>
         <pagination [pagination]="pagination | pages"></pagination>
       </div>
@@ -31,6 +31,8 @@ export class RegionOverviewComponent {
     regions:Region[];
     pagination:Pagination;
 
+    private lastQuery:string;
+
     constructor(private regionService:RegionService) {
         this.regionService = regionService;
 
@@ -46,6 +48,22 @@ export class RegionOverviewComponent {
                 }
             )
     }
+
+    onQuery(query){
+
+        this.lastQuery = query;
+        this.regionService.fetch(query, 10, 0)
+            .subscribe(
+                result => {
+                    // the inputvalue could have changed in the meantime
+                    if (query == this.lastQuery) {
+                        this.onResult(result);
+                    }
+                },
+                error => console.log(error)
+            );
+    }
+
 
     onResult(result){
         console.log("onResult", result);

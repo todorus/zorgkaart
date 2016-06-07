@@ -8,7 +8,7 @@ import {RegionQueryComponent} from "./region-query.component";
     selector: 'region-search',
     directives: [RegionListComponent, RegionQueryComponent],
     template: `
-    <region-query (result)="onResult(regions=$event.data)"></region-query>
+    <region-query (query)="onQuery($event)"></region-query>
     <region-list [regions]="regions"></region-list>
   `,
     styles: [
@@ -39,16 +39,31 @@ export class RegionSearchComponent {
 
     errorMessage;
 
-    private _inputValue:string = '';
     private _focusIndex = -1;
     regions:Region[] = [];
+
+    private lastQuery:string = '';
 
 
     constructor(private _regionService:RegionService) {
     }
 
-    onResult(result){
-        console.log("result", result);
+    onQuery(query){
+        console.log("onquery", query);
+
+        this.lastQuery = query;
+        this._regionService.fetch(query, 10, 0)
+            .subscribe(
+                result => {
+                    console.log("onQueryResult", result);
+                    // the inputvalue could have changed in the meantime
+                    if (query == this.lastQuery) {
+                        console.log("set regions", result.data);
+                        this.regions = result.data;
+                    }
+                },
+                error => this.errorMessage = <any>error
+            );
     }
 
     private onKey(event:KeyboardEvent, query:string):void {
@@ -71,11 +86,11 @@ export class RegionSearchComponent {
     }
 
     private search(query:string) {
-        if (query == this._inputValue) {
+        if (query == this.lastQuery) {
             return;
         }
 
-        this._inputValue = query;
+        this.lastQuery = query;
         if (query == null || query.length < 2) {
             this.regions = [];
             return;
@@ -85,7 +100,7 @@ export class RegionSearchComponent {
             .subscribe(
                 result => {
                     // the inputvalue could have changed in the meantime
-                    if (query == this._inputValue) {
+                    if (query == this.lastQuery) {
                         this.regions = result.data;
                     }
                 },
@@ -119,7 +134,7 @@ export class RegionSearchComponent {
 
     private clear():void {
         this.regions = [];
-        this._inputValue = '';
+        this.lastQuery = '';
         this._focusIndex = -1;
     }
 
