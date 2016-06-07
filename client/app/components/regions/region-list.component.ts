@@ -1,4 +1,4 @@
-import {Component, Input} from 'angular2/core';
+import {Component, Input, Output, EventEmitter} from 'angular2/core';
 import {Region} from '../../model/region';
 import {RegionService} from "../../services/region.service";
 
@@ -44,20 +44,16 @@ export class RegionListComponent {
 
     @Input("regions")
     regions:Region[] = [];
+    
+    @Output("selected")
+    selected:EventEmitter<Region> = new EventEmitter();
 
 
-    constructor(private _regionService:RegionService) {
+    constructor() {
     }
 
     private select(region:Region) {
-        this._regionService.select(region);
-        this.clear();
-    }
-
-    private clear():void {
-        this.regions = [];
-        this._inputValue = '';
-        this._focusIndex = -1;
+        this.selected.next(region);
     }
 
 }

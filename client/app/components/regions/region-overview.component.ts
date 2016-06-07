@@ -5,6 +5,7 @@ import {RegionListComponent} from "./region-list.component";
 import {RegionQueryComponent} from "./region-query.component";
 import {PaginationComponent, PagesPipe} from "../pagination-component";
 import {Pagination} from "../../model/Pagination";
+import {Router} from "angular2/router";
 
 @Component({
     selector: 'region-overview',
@@ -13,7 +14,7 @@ import {Pagination} from "../../model/Pagination";
     <div id="menu_container" class="side">
       <div id="menu" class="side">
         <region-query (query)="onQuery($event)"></region-query>
-        <region-list [regions]="regions"></region-list>
+        <region-list [regions]="regions" (selected)="select($event)"></region-list>
         <pagination [pagination]="pagination | pages" (page)="onPage($event)"></pagination>
       </div>
     </div>
@@ -34,7 +35,7 @@ export class RegionOverviewComponent {
     private currentQuery:string;
     private currentPage:Number = 1;
 
-    constructor(private regionService:RegionService) {
+    constructor(private regionService:RegionService, private router:Router) {
         this.regionService = regionService;
 
         this.regionService.editMode = false;
@@ -57,7 +58,6 @@ export class RegionOverviewComponent {
     }
 
     onPage(page:Number){
-        console.log("onPage", page);
         this.currentPage = page;
         this.search(this.currentQuery, this.currentPage);
     }
@@ -75,11 +75,13 @@ export class RegionOverviewComponent {
             );
     }
 
-
     onResult(result){
-        console.log("onResult", result);
         this.pagination = result.pages;
         this.regions = result.data;
+    }
+
+    select(region:Region){
+        this.router.navigate(['/RegionShow', {id: region.id}]);
     }
 
 }

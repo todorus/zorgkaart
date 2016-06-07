@@ -9,7 +9,7 @@ import {RegionQueryComponent} from "./region-query.component";
     directives: [RegionListComponent, RegionQueryComponent],
     template: `
     <region-query (query)="onQuery($event)"></region-query>
-    <region-list [regions]="regions"></region-list>
+    <region-list [regions]="regions" (selected)="select($event)"></region-list>
   `,
     styles: [
         `
