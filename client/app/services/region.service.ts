@@ -3,6 +3,7 @@ import {Region} from "../model/region";
 import {Http, Response, URLSearchParams, RequestOptions, Headers} from "angular2/http";
 import {Observable} from "rxjs/Observable";
 import {Subject} from "rxjs/Subject";
+import {Pagination} from "../model/Pagination";
 
 @Injectable()
 export class RegionService {
@@ -26,13 +27,20 @@ export class RegionService {
     constructor(private _http:Http) {
     }
 
-    fetch(query:string):Observable {
+    fetch(query:string, limit:Number, page:Number):Observable {
         let params:URLSearchParams = new URLSearchParams();
-        params.set('query', query);
-        params.set('limit', '3');
+        if(query) {
+            params.set('query', query);
+        }
+
+        limit = limit >= 1 ? limit : 3;
+        params.set('limit', limit.toString());
+
+        page = page >= 0 ? page : 0;
+        params.set('page', page.toString());
 
         return this._http.get(this._regionsUrl, {search: params})
-            .map(res => <Region[]> res.json())
+            .map(res => <RegionResult> res.json())
             .catch(this.handleError);
     }
 
@@ -138,4 +146,9 @@ export class RegionService {
     private isInSelection(region:Region):boolean {
         return this._selectionStore.find(candidate => candidate.id == region.id) != null;
     }
+}
+
+export class RegionResult {
+    pagination:Pagination;
+    data:Region[];
 }

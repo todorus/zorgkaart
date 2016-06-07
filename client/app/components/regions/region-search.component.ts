@@ -1,24 +1,15 @@
 import {Component, Input} from 'angular2/core';
 import {Region} from '../../model/region';
 import {RegionService} from "../../services/region.service";
+import {RegionListComponent} from "./region-list.component";
+import {RegionQueryComponent} from "./region-query.component";
 
 @Component({
     selector: 'region-search',
+    directives: [RegionListComponent, RegionQueryComponent],
     template: `
-    <input class="regionquery" placeholder="gemeentes, postcodes, zorgregios"
-     #query [value]="_inputValue" (keyup)="onKey($event, query.value)"/>
-    <ul class="regions">
-      <li *ngFor="#region of regions" (click)="select(region)"
-        [ngClass]="{focus: region.hover}">
-        {{region.name}}
-        <span [ngSwitch]="region.type">
-          <span *ngSwitchWhen="1">(Postcode)</span>
-          <span *ngSwitchWhen="100">(Plaats)</span>
-          <span *ngSwitchWhen="200">(Gemeente)</span>
-          <span *ngSwitchWhen="300">(Provincie)</span>
-        </span>
-      </li>
-    </ul>
+    <region-query (query)="onQuery($event)"></region-query>
+    <region-list [regions]="regions"></region-list>
   `,
     styles: [
         `
@@ -48,12 +39,31 @@ export class RegionSearchComponent {
 
     errorMessage;
 
-    private _inputValue:string = '';
     private _focusIndex = -1;
     regions:Region[] = [];
 
+    private lastQuery:string = '';
+
 
     constructor(private _regionService:RegionService) {
+    }
+
+    onQuery(query){
+        console.log("onquery", query);
+
+        this.lastQuery = query;
+        this._regionService.fetch(query, 10, 0)
+            .subscribe(
+                result => {
+                    console.log("onQueryResult", result);
+                    // the inputvalue could have changed in the meantime
+                    if (query == this.lastQuery) {
+                        console.log("set regions", result.data);
+                        this.regions = result.data;
+                    }
+                },
+                error => this.errorMessage = <any>error
+            );
     }
 
     private onKey(event:KeyboardEvent, query:string):void {
@@ -76,22 +86,22 @@ export class RegionSearchComponent {
     }
 
     private search(query:string) {
-        if (query == this._inputValue) {
+        if (query == this.lastQuery) {
             return;
         }
 
-        this._inputValue = query;
+        this.lastQuery = query;
         if (query == null || query.length < 2) {
             this.regions = [];
             return;
         }
 
-        this._regionService.fetch(query)
+        this._regionService.fetch(query, 3, 0)
             .subscribe(
-                regions => {
+                result => {
                     // the inputvalue could have changed in the meantime
-                    if (query == this._inputValue) {
-                        this.regions = regions;
+                    if (query == this.lastQuery) {
+                        this.regions = result.data;
                     }
                 },
                 error => this.errorMessage = <any>error
@@ -124,7 +134,7 @@ export class RegionSearchComponent {
 
     private clear():void {
         this.regions = [];
-        this._inputValue = '';
+        this.lastQuery = '';
         this._focusIndex = -1;
     }
 
