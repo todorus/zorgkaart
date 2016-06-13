@@ -9,7 +9,7 @@ describe("/organisations", function () {
 
   describe("create", function () {
 
-    before(
+    beforeEach(
       function (done) {
         // Wipe db
         Utils.wipe().then(
